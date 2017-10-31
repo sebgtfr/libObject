@@ -8,8 +8,6 @@
 #ifndef BUFFER_HPP_
 # define BUFFER_HPP_
 
-# include "Memory.hpp"
-
 class					Buffer
 {
 private: /* Private's attributs */

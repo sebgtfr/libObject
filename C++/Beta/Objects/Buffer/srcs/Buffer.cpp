@@ -5,6 +5,7 @@
 * \date					24/06/2017
 */
 #include <cstdint>
+#include "Memory.hpp"
 #include "Buffer.hpp"
 
 Buffer::Buffer(size_t const size) : m_size(0), m_capacity(0), m_data(NULL)
