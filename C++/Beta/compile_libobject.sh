@@ -7,12 +7,12 @@ export DEBUG=on
 export OS_SYSTEM="linux"
 
 # List Objects
-OBJECTS=("Singleton" "Memory")
-#          01           02
+OBJECTS=("Singleton" "Memory" "Buffer")
+#            01         02       03
 
 # List of module's states, this is associative array of OBJECTS. HERE TO ACTIVATE MODULE.
-STATE_MODULE=("on" "on")
-#              01   02
+STATE_MODULE=("on" "on" "on")
+#              01   02   03
 
 NB_OBJECTS=${#OBJECTS[@]}	# Number of objects.
 NB_MODULE=${#STATE_MODULE[@]}	# Number of module.

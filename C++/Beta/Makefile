@@ -34,15 +34,25 @@ OBJS			=
 CXXFLAGS		+= -Wall -Wextra -Werror
 CXXFLAGS		+= -I"$(INCLUDE)"
 
-#ifeq ($(MODULE_MEMORY), on)
+ifeq ($(MODULE_MEMORY), on)
 
-#PATH_MEMORY_SRCS	= ${DIR_MEMORY}/srcs/
+PATH_MEMORY_SRCS	= ${DIR_MEMORY}/srcs/
 
-#SRCS_MEMORY		= $(PATH_MEMORY_SRCS)Memory.cpp
+SRCS_MEMORY		= $(PATH_MEMORY_SRCS)Memory.cpp
 
-#OBJS			+= $(SRCS_MEMORY:.cpp=.o)
+OBJS			+= $(SRCS_MEMORY:.cpp=.o)
 
-#endif
+endif
+
+ifeq ($(MODULE_BUFFER), on)
+
+PATH_BUFFER_SRCS	= ${DIR_BUFFER}/srcs/
+
+SRCS_BUFFER		= $(PATH_BUFFER_SRCS)Buffer.cpp
+
+OBJS			+= $(SRCS_BUFFER:.cpp=.o)
+
+endif
 
 CPP			= g++
 
