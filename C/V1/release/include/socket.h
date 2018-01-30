@@ -89,7 +89,15 @@ typedef struct			s_socket
 #  define _SOCKET_OUTPUT_SIZE_	(1024)
 # endif /* !_SOCKET_OUTPUT_SIZE_ */
 
+/*
+** Socket *this, void *message, size_t size
+*/
 # define SOCKET_WRITE(t, m, s)	buffer_concat(&(t)->_output, m, s)
+
+/*
+** Socket *this
+*/
+# define SOCKET_GET_INPUT(t)	(t)->_input
 
 /*
 ** Socket session's functions

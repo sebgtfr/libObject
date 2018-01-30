@@ -21,26 +21,24 @@
 *
 */
 void			list_erase(t_list *this, t_item *item,
-				   t_fct_clear clear)
+                           t_fct_clear clear)
 {
-  if (this->_length && item)
-    {
-      t_item		*next = item->_prev;
-      t_item		*prev = item->_next;
+    if (this->_length && item)
+        {
+            t_item		*next = item->_next;
+            t_item		*prev = item->_prev;
 
-      prev = item->_prev;
-      next = item->_next;
-      if (this->_begin == item)
-	this->_begin = this->_begin->_next;
-      if (this->_end == item)
-	this->_end = this->_end->_prev;
-      if (clear)
-	clear(item->_data);
-      free(item);
-      if (prev)
-	prev->_next = next;
-      if (next)
-	next->_prev = prev;
-      --(this->_length);
-    }
+            if (this->_begin == item)
+                this->_begin = this->_begin->_next;
+            if (this->_end == item)
+                this->_end = this->_end->_prev;
+            if (clear)
+                clear(item->_data);
+            free(item);
+            if (prev)
+                prev->_next = next;
+            if (next)
+                next->_prev = prev;
+            --(this->_length);
+        }
 }

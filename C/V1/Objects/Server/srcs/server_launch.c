@@ -16,6 +16,11 @@ static void                     server_sigquit(__attribute__((unused))int sig)
   lg_continu = false;
 }
 
+static void             delete_client_of_memory(void *client)
+{
+    free(*(void **)client);
+}
+
 static t_item			*server_disconnectClient(t_server *this,
 							 t_server_client *client,
 							 t_item *it)
@@ -25,8 +30,10 @@ static t_item			*server_disconnectClient(t_server *this,
   if (this->_events._disconnection)
     this->_events._disconnection(this, client);
   socket_dtor(&client->_socket);
+  if (this->_events._deleteClient)
+      this->_events._deleteClient(client);
   it = it->_next;
-  list_erase(&this->_clients, node, this->_events._deleteClient);
+  list_erase(&this->_clients, node, delete_client_of_memory);
   return (it);
 }
 
@@ -78,7 +85,7 @@ static int			server_app(t_server *this, t_bool execTimerFunction,
     }
   while (it)
     {
-      t_server_client		*client = (t_server_client *)it->_data;
+      t_server_client		*client = *(t_server_client **)it->_data;
 
       if (!client->_connect)
 	it = server_disconnectClient(this, client, it);
@@ -100,31 +107,30 @@ static int			server_app(t_server *this, t_bool execTimerFunction,
 
 static t_bool	       		server_newClient(t_server *this)
 {
-  int				fd = SOCKET_ERROR;
-  SOCKADDR			*sockaddr = malloc(this->_socket._socklen);
+    int                     fd = SOCKET_ERROR;
+    SOCKADDR                *sockaddr = malloc(this->_socket._socklen);
+    t_server_client         *client;
 
-  if ((sockaddr) &&
-      ((fd = accept(this->_socket._fd, this->_socket._sockaddr,
-		    &this->_socket._socklen)) != SOCKET_ERROR) &&
-      (list_push_back(&this->_clients, NULL)))
-    {
-      t_server_client		*client = (t_server_client *)this->_clients._end->_data;
-
-      client->_socket._fd = fd;
-      socket_init(&client->_socket, sockaddr, this->_socket._socklen);
-      client->_connect = true;
-      if (this->_events._newClient)
-	this->_events._newClient(this, client);
-      return (true);
-    }
-  else
-    {
-      if (sockaddr)
-	free(sockaddr);
-      if (fd != SOCKET_ERROR)
-	closesocket(fd);
-    }
-  return (false);
+    if ((sockaddr) &&
+        ((fd = accept(this->_socket._fd, this->_socket._sockaddr,
+                      &this->_socket._socklen)) != SOCKET_ERROR) &&
+        ((this->_events._newClient) &&
+         (client = this->_events._newClient(this))) &&
+        (list_push_back(&this->_clients, &client)))
+        {
+            client->_socket._fd = fd;
+            socket_init(&client->_socket, sockaddr, this->_socket._socklen);
+            client->_connect = true;
+            return (true);
+        }
+    else
+        {
+            if (sockaddr)
+                free(sockaddr);
+            if (fd != SOCKET_ERROR)
+                closesocket(fd);
+        }
+    return (false);
 }
 
 static void			server_init_fdset(fd_set fdSet[2][FD_SET_LAST],
@@ -137,65 +143,65 @@ static void			server_init_fdset(fd_set fdSet[2][FD_SET_LAST],
 }
 
 t_bool				server_launch(t_server *this,
-					      uint32_t const secFrequency,
-					      uint32_t const usecFrequency)
+                                  uint32_t const secFrequency,
+                                  uint32_t const usecFrequency)
 {
-  if ((signal(SIGINT, &server_sigquit) != SIG_ERR))
-    {
-      struct timeval		tv = {secFrequency, usecFrequency};
-      t_bool			execTimerFunction = true;
-      uint8_t			currentFdSet = 0;
-      int			maxFd;
-      fd_set			fdSet[2][FD_SET_LAST];
-      struct timespec		now;
-      struct timespec		old;
-      t_bool			stateGetOldTime;
-      t_bool			stateGetNowTime;
+    if ((signal(SIGINT, &server_sigquit) != SIG_ERR))
+        {
+            struct timeval		tv = {secFrequency, usecFrequency};
+            t_bool			execTimerFunction = true;
+            uint8_t			currentFdSet = 0;
+            int			maxFd;
+            fd_set			fdSet[2][FD_SET_LAST];
+            struct timespec		now;
+            struct timespec		old;
+            t_bool			stateGetOldTime;
+            t_bool			stateGetNowTime;
 
-      this->_timer = tv;
-      server_init_fdset(fdSet, !currentFdSet);
-      while (lg_continu)
-	{
-	  stateGetOldTime = CAST_BOOL(clock_gettime(CLOCK_MONOTONIC, &old) != -1);
-	  server_init_fdset(fdSet, currentFdSet);
-	  if (this->_events._stdin)
-	    FD_SET(STDIN_FILENO, fdSet[currentFdSet] + FD_SET_READ);
-	  FD_SET(this->_socket._fd, fdSet[currentFdSet] + FD_SET_READ);
-	  maxFd = server_app(this, execTimerFunction, fdSet, currentFdSet);
-	  if (!BUFFER_EMPTY(&this->_output))
-	    FD_SET(STDOUT_FILENO, fdSet[currentFdSet] + FD_SET_WRITE);
-	  stateGetNowTime = CAST_BOOL(clock_gettime(CLOCK_MONOTONIC, &now) != -1);
-	  if (stateGetNowTime && stateGetOldTime)
-	    {
-	      uint32_t		sec = now.tv_sec - old.tv_sec;
-	      uint32_t		usec = (now.tv_nsec - old.tv_nsec) / 1000;
+            this->_timer = tv;
+            server_init_fdset(fdSet, !currentFdSet);
+            while (lg_continu)
+                {
+                    stateGetOldTime = CAST_BOOL(clock_gettime(CLOCK_MONOTONIC, &old) != -1);
+                    server_init_fdset(fdSet, currentFdSet);
+                    if (this->_events._stdin)
+                        FD_SET(STDIN_FILENO, fdSet[currentFdSet] + FD_SET_READ);
+                    FD_SET(this->_socket._fd, fdSet[currentFdSet] + FD_SET_READ);
+                    maxFd = server_app(this, execTimerFunction, fdSet, currentFdSet);
+                    if (!BUFFER_EMPTY(&this->_output))
+                        FD_SET(STDOUT_FILENO, fdSet[currentFdSet] + FD_SET_WRITE);
+                    stateGetNowTime = CAST_BOOL(clock_gettime(CLOCK_MONOTONIC, &now) != -1);
+                    if (stateGetNowTime && stateGetOldTime)
+                        {
+                            uint32_t		sec = now.tv_sec - old.tv_sec;
+                            uint32_t		usec = (now.tv_nsec - old.tv_nsec) / 1000;
 
 
-	      if (usec > tv.tv_usec)
-		{
-		  if (tv.tv_sec > 0)
-		    {
-		      --tv.tv_sec;
-		      tv.tv_usec = tv.tv_usec + 1000000 - usec;
-		    }
-		  else
-		    tv.tv_usec = 0;
-		}
-	      else
-		tv.tv_usec -= usec;
-	      tv.tv_sec = (sec >= tv.tv_sec) ? 0 : (tv.tv_sec - sec);
-	    }
-	  if (select(maxFd + 1, fdSet[currentFdSet] + FD_SET_READ,
-		     fdSet[currentFdSet] + FD_SET_WRITE,
-		     fdSet[currentFdSet] + FD_SET_EXCEPT, &tv) == -1)
-	    lg_continu = false;
-	  else if (FD_ISSET(this->_socket._fd, fdSet[currentFdSet] + FD_SET_READ))
-	    server_newClient(this);
-	  if ((execTimerFunction = (tv.tv_sec == 0 && tv.tv_usec == 0)))
-	    tv = this->_timer;
-	  currentFdSet = !currentFdSet;
-	}
-      return (true);
-    }
-  return (false);
+                            if (usec > tv.tv_usec)
+                                {
+                                    if (tv.tv_sec > 0)
+                                        {
+                                            --tv.tv_sec;
+                                            tv.tv_usec = tv.tv_usec + 1000000 - usec;
+                                        }
+                                    else
+                                        tv.tv_usec = 0;
+                                }
+                            else
+                                tv.tv_usec -= usec;
+                            tv.tv_sec = (sec >= tv.tv_sec) ? 0 : (tv.tv_sec - sec);
+                        }
+                    if (select(maxFd + 1, fdSet[currentFdSet] + FD_SET_READ,
+                               fdSet[currentFdSet] + FD_SET_WRITE,
+                               fdSet[currentFdSet] + FD_SET_EXCEPT, &tv) == -1)
+                        lg_continu = false;
+                    else if (FD_ISSET(this->_socket._fd, fdSet[currentFdSet] + FD_SET_READ))
+                        server_newClient(this);
+                    if ((execTimerFunction = (tv.tv_sec == 0 && tv.tv_usec == 0)))
+                        tv = this->_timer;
+                    currentFdSet = !currentFdSet;
+                }
+            return (true);
+        }
+    return (false);
 }

@@ -16,14 +16,13 @@ static void			serverUDP_configSockaddr(SOCKADDR_IN *sockaddr,
 }
 
 t_bool				serverUDP_ctor(t_server *this,
-					       uint64_t const sizeClient,
-					       uint16_t const port)
+                                   uint16_t const port)
 {
-  if (server_ctor(this, SOCKET_UDP, sizeClient, sizeof(SOCKADDR_IN)))
-    {
-      serverUDP_configSockaddr((SOCKADDR_IN *)this->_socket._sockaddr,
-			       port);
-      return (true);
-    }
-  return (false);
+    if (server_ctor(this, SOCKET_UDP, sizeof(SOCKADDR_IN)))
+        {
+            serverUDP_configSockaddr((SOCKADDR_IN *)this->_socket._sockaddr,
+                                     port);
+            return (true);
+        }
+    return (false);
 }

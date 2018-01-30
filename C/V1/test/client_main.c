@@ -27,7 +27,7 @@ int				main(int ac, char **av)
     {
       client_setEvent(&client, CLIENT_EVENT_STDIN, stdinEvent);
       if (client_connect(&client))
-	client_launch(&client, 10, 0);
+          client_launch(&client, 10, 0);
       client_dtor(&client);
     }
   socket_end();

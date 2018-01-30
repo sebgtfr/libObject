@@ -8,21 +8,22 @@
 #include "server.h"
 
 static void	       		server_dtorClients(t_list *clients,
-						   t_fct_clear clear)
+                                           t_fct_clear clear)
 {
-  t_item			*elem;
+    while (clients->_begin)
+        {
+            t_item			*elem = clients->_begin;
+            t_server_client *client = *(t_server_client **)elem->_data;
 
-  while (clients->_begin)
-    {
-      elem = clients->_begin;
-      clients->_begin = clients->_begin->_next;
-      socket_dtor((t_socket *)elem->_data);
-      if (clear)
-	clear((void *)elem->_data);
-      free(elem);
-    }
-  clients->_length = 0;
-  clients->_end = NULL;
+            clients->_begin = clients->_begin->_next;
+            socket_dtor((t_socket *)client);
+            if (clear)
+                clear((void *)client);
+            free((void *)client);
+            free(elem);
+        }
+    clients->_length = 0;
+    clients->_end = NULL;
 }
 
 void				server_dtor(t_server *this)

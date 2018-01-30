@@ -26,7 +26,7 @@ static t_item			*list_new_item(void const *content,
   if ((elem = malloc(sizeof(*elem) + size)))
     {
       if (content)
-	(void)memcpy((void *)elem->_data, content, size);
+          (void)memcpy((void *)elem->_data, content, size);
       elem->_prev = NULL;
       elem->_next = NULL;
     }

@@ -18,14 +18,13 @@ static void			serverUNIX_configSockaddr(struct sockaddr_un *sockaddr,
 }
 
 t_bool				serverUNIX_ctor(t_server *this,
-						uint64_t const sizeClient,
-					        char const *path)
+                                    char const *path)
 {
-  if (server_ctor(this, SOCKET_UNIX, sizeClient, sizeof(struct sockaddr_un)))
-    {
-      serverUNIX_configSockaddr((struct sockaddr_un *)this->_server._socket._sockaddr,
-			        path);
-      return (true);
-    }
-  return (false);
+    if (server_ctor(this, SOCKET_UNIX, sizeof(struct sockaddr_un)))
+        {
+            serverUNIX_configSockaddr((struct sockaddr_un *)this->_server._socket._sockaddr,
+                                      path);
+            return (true);
+        }
+    return (false);
 }
