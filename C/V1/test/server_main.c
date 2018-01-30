@@ -26,7 +26,7 @@ static int          g_ticks = 0;
 
 void				action()
 {
-  (void)printf("\r=> %03d secondes", g_ticks++);
+  (void)printf("\r=> %03d secondes : ", g_ticks++);
   fflush(stdout);
 }
 
