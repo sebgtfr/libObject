@@ -5,18 +5,18 @@
 ## Login   <le-mai_s@epitech.net>
 ## 
 ## Started on  Fri Dec 23 11:13:16 2016 Sébastien Le Maire
-## Last update Tue Mar  7 22:17:52 2017 Sébastien Le Maire
+## Last update Wed Jan 31 15:36:09 2018 Sébastien Le Maire
 ##
 
 ifndef RELEASE
 
-RELEASE			= .
+RELEASE			= ../
 
 endif
 
 ifndef INCLUDE
 
-INCLUDE			= ./include
+INCLUDE			= ../include
 
 endif
 
@@ -226,6 +226,17 @@ SRCS_NUMBER		+= $(PATH_NUMBER_SRCS)number_sum.c
 SRCS_NUMBER		+= $(PATH_NUMBER_SRCS)number_multiplication.c
 
 OBJS			+= $(SRCS_NUMBER:.c=.o)
+
+endif
+
+ifeq ($(MODULE_THREAD), on)
+
+PATH_THREAD_SRCS		= ${DIR_THREAD}/srcs/
+
+SRCS_THREAD		= $(PATH_THREAD_SRCS)thread.c
+SRCS_THREAD		+= $(PATH_THREAD_SRCS)mutex.c
+
+OBJS			+= $(SRCS_THREAD:.c=.o)
 
 endif
 

@@ -7,13 +7,13 @@ export DEBUG=on
 export OS_SYSTEM="linux"
 
 # List Objects
-OBJECTS=("String" "Vector" "List" "Buffer" "Ini" "Timer" "Socket" "Server" "Client" "Number")
-#          01        02      03      04     05     06       07      08       09        10
+OBJECTS=("String" "Vector" "List" "Buffer" "Ini" "Timer" "Socket" "Server" "Client" "Number" "Thread")
+#          01        02      03      04     05     06       07      08       09        10       11
 
 # List of module's states, this is associative array of OBJECTS. HERE TO ACTIVATE MODULE.
-STATE_MODULE=("on" "on" "on" "on" "on" "on" "on" "on" "on" "on")
-#STATE_MODULE=("off" "off" "off" "off" "off" "off" "off" "off" "off" "on")
-#              01   02   03   04   05   06   07   08   09   10
+STATE_MODULE=("on" "on" "on" "on" "on" "on" "on" "on" "on" "on" "on")
+#STATE_MODULE=("off" "off" "off" "off" "off" "off" "off" "off" "off" "on" "off")
+#               01    02    03    04    05    06    07    08    09    10   11
 
 NB_OBJECTS=${#OBJECTS[@]}	# Number of objects.
 NB_MODULE=${#STATE_MODULE[@]}	# Number of module.
@@ -51,6 +51,10 @@ active_dependence_module_on()
 	activate_module ${OBJECTS[$STRING]} "(need by Ini)" $STRING		# Ini need String module.
 	activate_module ${OBJECTS[$VECTOR]} "(need by Ini)" $VECTOR		# Ini need Vector module.
     fi
+    if [ "${STATE_MODULE[$THREAD]}" == "on" ]
+    then
+	activate_module ${OBJECTS[$VECTOR]} "(need by Thread)" $VECTOR	# Thread need Vector module.
+    fi
     if [ "${STATE_MODULE[$SERVER]}" == "on" ]
     then
 	activate_module ${OBJECTS[$LIST]} "(need by Server)" $LIST		# Server need List module.
@@ -80,7 +84,7 @@ active_dependence_module_on()
 generate_objects()
 {
     # Generate objects
-    BASE_DIR_OBJECT="./Objects"
+    BASE_DIR_OBJECT="../Objects"
     for ((i=0; i < $NB_OBJECTS; ++i))
     do
 	OBJECT_NAME=${OBJECTS[$i]} # get name of current object.
@@ -104,13 +108,13 @@ generate_objects()
 # Create release's directory.
 create_release_file()
 {
-    export RELEASE="./release"
+    export RELEASE="../release"
     export INCLUDE="$RELEASE/include"
 
     # Generate Release directory
     if [ -e $RELEASE ]
     then
-	rm -fr $RELEASE
+	    rm -fr $RELEASE
     fi
 
     # Generate include's release directory

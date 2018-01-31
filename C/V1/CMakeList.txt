@@ -1,0 +1,144 @@
+cmake_minimum_required(VERSION 2.6)
+project(libObject)
+
+set(ROOT ${PWD})
+set(ROOT_OBJECTS ${PWD}/Objects)
+
+set(LIBRARY_OUTPUT_PATH lib/${CMAKE_BUILD_TYPE})
+
+include_directories(
+        ${ROOT_OBJECTS}/Bool/
+        ${ROOT_OBJECTS}/Buffer/include/
+        ${ROOT_OBJECTS}/Client/include/
+        ${ROOT_OBJECTS}/Ini/include/
+        ${ROOT_OBJECTS}/List/include/
+        ${ROOT_OBJECTS}/Number/include/
+        ${ROOT_OBJECTS}/Server/include/
+        ${ROOT_OBJECTS}/Socket/include/
+        ${ROOT_OBJECTS}/String/include/
+        ${ROOT_OBJECTS}/Timer/include/
+        ${ROOT_OBJECTS}/Vector/include/
+)
+
+file(
+
+        GLOB_RECURSE
+
+        source_files
+
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_assign.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_change.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_concat.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_copy.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_ctor.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_dtor.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_print.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_resize.c
+        ${ROOT_OBJECTS}/Buffer/srcs/buffer_shift.c
+
+        ${ROOT_OBJECTS}/Client/srcs/client_connect.c
+        ${ROOT_OBJECTS}/Client/srcs/client_ctor.c
+        ${ROOT_OBJECTS}/Client/srcs/client_dtor.c
+        ${ROOT_OBJECTS}/Client/srcs/client_launch.c
+        ${ROOT_OBJECTS}/Client/srcs/client_setEvent.c
+        ${ROOT_OBJECTS}/Client/srcs/clientTCP_ctor.c
+        ${ROOT_OBJECTS}/Client/srcs/clientUDP_ctor.c
+        ${ROOT_OBJECTS}/Client/srcs/clientUNIX_ctor.c
+
+        ${ROOT_OBJECTS}/Ini/srcs/ini_ctor.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_dtor.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_get_dataMap.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_get_section.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_load.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_push_dataMap.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_push_new_dataMap.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_push_new_section.c
+        ${ROOT_OBJECTS}/Ini/srcs/ini_save.c
+
+        ${ROOT_OBJECTS}/List/srcs/list_clear.c
+        ${ROOT_OBJECTS}/List/srcs/list_compare.c
+        ${ROOT_OBJECTS}/List/srcs/list_copy.c
+        ${ROOT_OBJECTS}/List/srcs/list_ctor.c
+        ${ROOT_OBJECTS}/List/srcs/list_dtor.c
+        ${ROOT_OBJECTS}/List/srcs/list_erase.c
+        ${ROOT_OBJECTS}/List/srcs/list_foreach.c
+        ${ROOT_OBJECTS}/List/srcs/list_item.c
+        ${ROOT_OBJECTS}/List/srcs/list_pop.c
+        ${ROOT_OBJECTS}/List/srcs/list_push.c
+        ${ROOT_OBJECTS}/List/srcs/list_to_vector.c
+
+        ${ROOT_OBJECTS}/Number/srcs/number_allocation.c
+        ${ROOT_OBJECTS}/Number/srcs/number_assign.c
+        ${ROOT_OBJECTS}/Number/srcs/number_change.c
+        ${ROOT_OBJECTS}/Number/srcs/number_copy.c
+        ${ROOT_OBJECTS}/Number/srcs/number_ctor.c
+        ${ROOT_OBJECTS}/Number/srcs/number_delUselessZero.c
+        ${ROOT_OBJECTS}/Number/srcs/number_dtor.c
+        ${ROOT_OBJECTS}/Number/srcs/number_equal.c
+        ${ROOT_OBJECTS}/Number/srcs/number_great.c
+        ${ROOT_OBJECTS}/Number/srcs/number_init_res.c
+        ${ROOT_OBJECTS}/Number/srcs/number_integer.c
+        ${ROOT_OBJECTS}/Number/srcs/number_intFunction.c
+        ${ROOT_OBJECTS}/Number/srcs/number_low.c
+        ${ROOT_OBJECTS}/Number/srcs/number_multiplication.c
+        ${ROOT_OBJECTS}/Number/srcs/number_print.c
+        ${ROOT_OBJECTS}/Number/srcs/number_sum.c
+
+        ${ROOT_OBJECTS}/Server/srcs/server_connect.c
+        ${ROOT_OBJECTS}/Server/srcs/server_ctor.c
+        ${ROOT_OBJECTS}/Server/srcs/server_dtor.c
+        ${ROOT_OBJECTS}/Server/srcs/server_launch.c
+        ${ROOT_OBJECTS}/Server/srcs/server_setEvent.c
+        ${ROOT_OBJECTS}/Server/srcs/serverTCP_ctor.c
+        ${ROOT_OBJECTS}/Server/srcs/serverUDP_ctor.c
+        ${ROOT_OBJECTS}/Server/srcs/serverUNIX_ctor.c
+
+        ${ROOT_OBJECTS}/Socket/srcs/socket_ctor.c
+        ${ROOT_OBJECTS}/Socket/srcs/socket_dtor.c
+        ${ROOT_OBJECTS}/Socket/srcs/socket_init.c
+        ${ROOT_OBJECTS}/Socket/srcs/socket_recv.c
+        ${ROOT_OBJECTS}/Socket/srcs/socket_send.c
+        ${ROOT_OBJECTS}/Socket/srcs/socket_start_end.c
+
+        ${ROOT_OBJECTS}/String/srcs/string_add_page_memory.c
+        ${ROOT_OBJECTS}/String/srcs/string_assign.c
+        ${ROOT_OBJECTS}/String/srcs/string_change.c
+        ${ROOT_OBJECTS}/String/srcs/string_concat.c
+        ${ROOT_OBJECTS}/String/srcs/string_copy.c
+        ${ROOT_OBJECTS}/String/srcs/string_ctor.c
+        ${ROOT_OBJECTS}/String/srcs/string_delline.c
+        ${ROOT_OBJECTS}/String/srcs/string_dtor.c
+        ${ROOT_OBJECTS}/String/srcs/string_getline.c
+        ${ROOT_OBJECTS}/String/srcs/string_print.c
+        ${ROOT_OBJECTS}/String/srcs/string_push.c
+        ${ROOT_OBJECTS}/String/srcs/string_reset.c
+        ${ROOT_OBJECTS}/String/srcs/string_resize.c
+        ${ROOT_OBJECTS}/String/srcs/string_shift.c
+        ${ROOT_OBJECTS}/String/srcs/string_split.c
+        ${ROOT_OBJECTS}/String/srcs/string_trim.c
+
+        ${ROOT_OBJECTS}/Timer/srcs/timer_checkTicks.c
+        ${ROOT_OBJECTS}/Timer/srcs/timer_ctor.c
+        ${ROOT_OBJECTS}/Timer/srcs/timer_setFrequency.c
+
+        ${ROOT_OBJECTS}/Vector/srcs/vector_clear.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_compare.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_copy.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_ctor.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_dtor.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_foreach.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_pop.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_push.c
+        ${ROOT_OBJECTS}/Vector/srcs/vector_resize.c
+
+)
+
+add_library(
+
+        objects
+
+        SHARED
+
+        ${source_files}
+
+)
