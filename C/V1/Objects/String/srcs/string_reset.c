@@ -16,9 +16,9 @@
 */
 void				string_reset(t_string *this)
 {
-  if (this->_data)
-    {
-      this->_data[0] = '\0';
-      this->_length = 0;
-    }
+    if (this->_data)
+        {
+            this->_data[0] = g_nullchar;
+            this->_length = 0;
+        }
 }

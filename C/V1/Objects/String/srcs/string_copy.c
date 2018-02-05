@@ -21,22 +21,23 @@
 */
 t_bool				string_copy(t_string *this, t_string const *cpy)
 {
-  if (this != cpy)
-    {
-      if (cpy && cpy->_data)
-	{
-	  if (!(this->_data = realloc(this->_data, sizeof(char) * cpy->_capacity)))
-	    {
-	      this->_capacity = 0;
-	      this->_length = 0;
-	      return (false);
-	    }
-	  this->_length = cpy->_length;
-	  this->_capacity = cpy->_capacity;
-	  (void)strcpy(this->_data, cpy->_data);
-	}
-      else
-	*this = _INIT_STRING_;
-    }
-  return (true);
+    if (this != cpy)
+        {
+            if (cpy && cpy->_data)
+                {
+                    if (!(this->_data = realloc(this->_data, sizeof(char)
+                                                * cpy->_capacity)))
+                        {
+                            this->_capacity = 0;
+                            this->_length = 0;
+                            return (false);
+                        }
+                    this->_length = cpy->_length;
+                    this->_capacity = cpy->_capacity;
+                    (void)strcpy(this->_data, cpy->_data);
+                }
+            else
+                *this = g_defaultString;
+        }
+    return (true);
 }

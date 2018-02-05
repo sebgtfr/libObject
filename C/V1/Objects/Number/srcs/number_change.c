@@ -23,7 +23,7 @@ t_number			*number_change_int(t_number *this,
       return (NULL);
   this->_sign = CAST_BOOL(number >= 0);
   this->_length = i;
-  number_set_int(NUMBER_UNIT(this), number);
+  number_set_int(number_unit(this), number);
   this->_data[this->_length + 1] = '\0';
   return (this);
 }
@@ -35,7 +35,7 @@ t_number			*number_change_string(t_number *this,
   uint64_t			capacity;
 
   this->_sign = CAST_BOOL(number[0] != '-');
-  number += NUMBER_ISNEG(this);
+  number += number_isNeg(this);
   for (i = 0;(number[i] && IS_NUMBER(number[i])); ++i);
   if ((capacity = (this->_capacity < i) ? (i - this->_capacity) : 0))
     if (!number_resize(this, this->_capacity + capacity))

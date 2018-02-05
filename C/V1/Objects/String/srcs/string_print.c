@@ -20,7 +20,7 @@
 */
 t_bool				string_print(t_string *this, int const fd)
 {
-  if (this->_data)
-    return (!(write(fd, this->_data, this->_length) < 0));
-  return (true);
+    if (this->_data)
+        return (!(write(fd, this->_data, this->_length) < 0));
+    return (true);
 }

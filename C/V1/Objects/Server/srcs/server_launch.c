@@ -9,7 +9,7 @@
 #include <time.h>
 #include "server.h"
 
-t_bool				lg_continu = true;
+t_bool				lg_continu = TRUE;
 
 static void                     server_sigquit(__attribute__((unused))int sig)
 {

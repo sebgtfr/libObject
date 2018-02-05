@@ -12,6 +12,6 @@ t_bool				number_equal(t_number const *this,
 					     t_number const *num)
 {
   return ((this->_sign == num->_sign) ?
-	  (CAST_BOOL(!strcmp(NUMBER_DATA(this), NUMBER_DATA(num)))) :
+	  (CAST_BOOL(!strcmp(number_data(this), number_data(num)))) :
 	  (false));
 }

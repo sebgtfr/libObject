@@ -18,16 +18,16 @@
 */
 void				string_shift(t_string *this, uint64_t const shift)
 {
-  if (shift && this->_data)
-    {
-      if (shift < this->_length)
-	{
-	  (void)memmove(this->_data, (void *)this->_data + shift,
-			this->_length - shift);
-	  this->_length -= shift;
-	  this->_data[this->_length] = '\0';
-	}
-      else
-	string_reset(this);
-    }
+    if (shift && this->_data)
+        {
+            if (shift < this->_length)
+                {
+                    (void)memmove(this->_data, (void *)this->_data + shift,
+                                  this->_length - shift);
+                    this->_length -= shift;
+                    this->_data[this->_length] = g_nullchar;
+                }
+            else
+                string_reset(this);
+        }
 }

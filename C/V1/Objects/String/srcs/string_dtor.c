@@ -17,7 +17,7 @@
 */
 void				string_dtor(t_string *this)
 {
-  if (this->_data)
-    free(this->_data);
-  *this = _INIT_STRING_;
+    if (this->_data)
+        free(this->_data);
+    *this = g_defaultString;
 }

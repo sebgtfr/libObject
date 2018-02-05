@@ -7,21 +7,24 @@
 
 #include "mystring.h"
 
+static char const   l_space = ' ';
+static char const   l_tab = '\t';
+
 t_bool				string_trim(t_string *this)
 {
-  uint64_t			trimBegin = 0;
-  uint64_t			trimEnd = this->_length - 1;
+    uint64_t			trimBegin = 0;
+    uint64_t			trimEnd = this->_length - 1;
 
-  while ((this->_data[trimBegin]) && ((this->_data[trimBegin] == ' ') ||
-				      (this->_data[trimBegin] == '\t')))
-    ++trimBegin;
-  while ((trimEnd > 0) && ((this->_data[trimEnd] == ' ') ||
-			   (this->_data[trimEnd] == '\t')))
-    --trimEnd;
-  ++trimEnd;
-  this->_data[trimEnd] = '\0';
-  this->_length = trimEnd;
-  if (trimBegin)
-    string_shift(this, trimBegin);
-  return (true);
+    while ((this->_data[trimBegin]) && ((this->_data[trimBegin] == l_space) ||
+                                        (this->_data[trimBegin] == l_tab)))
+        ++trimBegin;
+    while ((trimEnd > 0) && ((this->_data[trimEnd] == l_space) ||
+                             (this->_data[trimEnd] == l_tab)))
+        --trimEnd;
+    ++trimEnd;
+    this->_data[trimEnd] = g_nullchar;
+    this->_length = trimEnd;
+    if (trimBegin)
+        string_shift(this, trimBegin);
+    return (true);
 }

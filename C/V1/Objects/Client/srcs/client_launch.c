@@ -8,7 +8,7 @@
 #include <signal.h>
 #include "client.h"
 
-t_bool				lg_continu = true;
+t_bool				lg_continu = TRUE;
 
 static void                     client_sigquit(__attribute__((unused))int sig)
 {

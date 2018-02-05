@@ -11,7 +11,7 @@ int64_t				number_integer(t_number const *this)
 {
   int64_t			num = 0;
 
-  if (this->_length <= _NUMBER_MAXLENGHT_INT_)
+  if (this->_length <= g_numberMaxLenghtInt)
     {
       char const		*digit = (this->_data +
 					  CAST_BOOL(this->_data[0] == '-'));
@@ -20,5 +20,5 @@ int64_t				number_integer(t_number const *this)
       while ((i++ < this->_length))
 	num = (num * 10) + NUMBER_TO_INT(*(digit++));
     }
-  return ((NUMBER_ISNEG(this) ? -num : num));
+  return ((number_isNeg(this) ? -num : num));
 }

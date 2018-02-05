@@ -21,24 +21,24 @@
 */
 t_bool				string_delline(t_string *this, char const lim)
 {
-  if (this->_data)
-    {
-      uint64_t			i = 0;
+    if (this->_data)
+        {
+            uint64_t			i = 0;
 
-      while ((i < this->_length) && (this->_data[i]) && (this->_data[i] != lim))
-	++i;
-      if (this->_data[i] == lim)
-	{
-	  char			*tmp = NULL;
+            while ((i < this->_length) && (this->_data[i]) && (this->_data[i] != lim))
+                ++i;
+            if (this->_data[i] == lim)
+                {
+                    char			*tmp = NULL;
 
-	  if (this->_data[i] && this->_data[i + 1])
-	    if (!(tmp = strdup(this->_data + (i + 1))))
-	      return (false);
-	  free(this->_data);
-	  this->_data = tmp;
-	  this->_length -= (this->_length <= (i + 1)) ? this->_length : (i + 1);
-	  this->_capacity = this->_length;
-	}
-    }
-  return (true);
+                    if (this->_data[i] && this->_data[i + 1])
+                        if (!(tmp = strdup(this->_data + (i + 1))))
+                            return (false);
+                    free(this->_data);
+                    this->_data = tmp;
+                    this->_length -= (this->_length <= (i + 1)) ? this->_length : (i + 1);
+                    this->_capacity = this->_length;
+                }
+        }
+    return (true);
 }

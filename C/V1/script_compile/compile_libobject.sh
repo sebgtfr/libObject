@@ -85,6 +85,7 @@ generate_objects()
 {
     # Generate objects
     BASE_DIR_OBJECT="../Objects"
+    export DIR_BOOL="${BASE_DIR_OBJECT}/Bool"
     for ((i=0; i < $NB_OBJECTS; ++i))
     do
 	OBJECT_NAME=${OBJECTS[$i]} # get name of current object.

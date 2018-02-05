@@ -10,10 +10,6 @@
 
 # include "bool.h"
 
-# ifndef NULL
-#  define NULL			(void *)0
-# endif
-
 typedef enum			e_number_type
   {
 				NUMBER_INT,
@@ -33,84 +29,125 @@ typedef struct			s_number
 /*
 ** Macros
 */
-# define NUMBER_INIT(s,c,l,d)	(t_number){s, c, l, d}
-# define _NUMBER_INIT_		NUMBER_INIT(false, 0, 0, NULL)
-# define _NUMBER_INIT_NULL_	NUMBER_INIT(true, 0, 1, "0\0")
-# define _NUMBER_MAXLENGHT_INT_	18 /* Lenght secure of int 64 for conversion */
+# define NUMBER_INIT(s, c, l, d)    (t_number){s, c, l, (char *)d}
+# define _NUMBER_INIT_              NUMBER_INIT(FALSE, 0, 0, 0)
+
 # define IS_NUMBER(n)		((n) >= '0' && (n) <= '9')
 # define NUMBER_TO_CHAR(n)	((n) + '0')
 # define NUMBER_TO_INT(n)	((n) - '0')
 # define NUMBER_ABS(n)		(((n) < 0) ? (-(n)) : (n))
-# define NUMBER_CHANGE_ABS(n)	(n)->_sign = true;
-# define NUMBER_NUM_ABS(n)      ((n)->_data + CAST_BOOL((n)->_data[0] == '-'))
-# define NUMBER_ISNEG(n)        (!(n)->_sign)
-# define NUMBER_DATA(n)		((n)->_data + (n)->_sign)
-# define NUMBER_UNIT(n)		((n)->_data + (n)->_length - CAST_BOOL((n)->_data[0] != '-'))
-# define NUMBER_ISZERO(n)	(((n)->_length == 1) && ((n)->_data[CAST_BOOL((n)->_data[0] == '-')] == '0'))
 
-/*
-** Macros functions
+/* Global */
+
+# ifndef _NULLPTR_
+#  define  _NULLPTR_
+/**
+* \brief		        Defini la constante NULL.
+* \details		        Défini la constante NULL si elle n'a pas été défini.
 */
-# define number_reverseSign(n)	if (n) (n)->_sign = !(n)->_sign
+extern void const * const       g_nullptr;
+
+# define __NUMBER_NULLPTR_DEFINE__
+
+# endif /* !_NULLPTR_ */
+
+extern t_number const           g_defaultNumber;
+extern t_number const           g_nullNumber;
+extern uint8_t const            g_numberMaxLenghtInt; /* Lenght secure of int 64 for conversion */
 
 /*
 ** Number's functions
 */
-t_bool				number_ctor(t_number *this,
-					    t_number_type const type,
-					    uint64_t number);
-void				number_dtor(t_number *this);
-t_bool				number_copy(t_number *this,
-					    t_number const *number);
+extern t_bool           number_ctor(t_number *this,
+                                    t_number_type const type,
+                                    uint64_t number);
+extern void				number_dtor(t_number *this);
+extern t_bool  			number_copy(t_number *this,
+                                    t_number const *number);
 
 /*
 ** Allocation
 */
-t_number			*number_new(void);
-void				number_delete(t_number *this);
-t_bool				number_resize(t_number *this, uint64_t const size);
+extern t_number			*number_new(void);
+extern void				number_delete(t_number *this);
+extern t_bool			number_resize(t_number *this, uint64_t const size);
 
 /*
 ** Operator
 */
-t_bool				number_equal(t_number const *this,
+extern t_bool				number_equal(t_number const *this,
 					     t_number const *num);
-t_bool				number_great(t_number const *this,
+extern t_bool				number_great(t_number const *this,
 					     t_number const *num);
-t_bool				number_low(t_number const *this,
+extern t_bool				number_low(t_number const *this,
 					   t_number const *num);
 
 /*
 ** Methods
 */
-t_number			*number_assign(t_number *this,
-					       t_number_type const type,
-					       uint64_t number);
-t_number			*number_assign_string(t_number *this,
-						      char const *number);
-t_number			*number_assign_int(t_number *this,
-						   int64_t number);
-t_number			*number_change(t_number *this,
-					       t_number_type const type,
-					       uint64_t number);
-t_number			*number_change_string(t_number *this,
-						      char const *number);
-t_number			*number_change_int(t_number *this,
-						   int64_t number);
-void				number_print(t_number *this, int const fd);
-void				number_delUselessZero(t_number *this);
-int64_t				number_integer(t_number const *this);
+extern t_number			*number_assign(t_number *this,
+                                       t_number_type const type,
+                                       uint64_t number);
+extern t_number			*number_assign_string(t_number *this,
+                                              char const *number);
+extern t_number			*number_assign_int(t_number *this,
+                                           int64_t number);
+extern t_number			*number_change(t_number *this,
+                                       t_number_type const type,
+                                       uint64_t number);
+extern t_number			*number_change_string(t_number *this,
+                                              char const *number);
+extern t_number			*number_change_int(t_number *this,
+                                           int64_t number);
+extern void				number_print(t_number *this, int const fd);
+extern void				number_delUselessZero(t_number *this);
+extern int64_t				number_integer(t_number const *this);
 
 /* Operations */
-t_number			*number_addition(t_number const *a,
-						 t_number const *b,
-						 t_number *res);
-t_number			*number_subtraction(t_number const *a,
-						    t_number *b,
-						    t_number *res);
-t_number			*number_multiplication(t_number const *a,
-						       t_number const *b,
-						       t_number *res);
+extern t_number			*number_addition(t_number const *a,
+                                         t_number const *b,
+                                         t_number *res);
+extern t_number			*number_subtraction(t_number const *a,
+                                            t_number *b,
+                                            t_number *res);
+extern t_number			*number_multiplication(t_number const *a,
+                                               t_number const *b,
+                                               t_number *res);
 
+static inline void              number_abs(t_number *this)
+{
+    this->_sign = true;
+};
+
+static inline char              *number_num_abs(t_number const *this)
+{
+    return this->_data + CAST_BOOL(this->_data[0] == '-');
+};
+
+static inline t_bool            number_isNeg(t_number const *this)
+{
+    return !this->_sign;
+};
+
+static inline char              *number_data(t_number const *this)
+{
+    return this->_data + this->_sign;
+};
+
+static inline char              *number_unit(t_number const *this)
+{
+    return this->_data + this->_length - CAST_BOOL(this->_data[0] != '-');
+};
+
+static inline t_bool            number_isZero(t_number const *this)
+{
+    return (this->_length == 1) &&
+        (this->_data[CAST_BOOL(this->_data[0] == '-')] == '0');
+};
+
+static inline void              number_reverseSign(t_number *this)
+{
+    this->_sign = !this->_sign;
+};
 
 #endif /* !NUMBER_H_ */

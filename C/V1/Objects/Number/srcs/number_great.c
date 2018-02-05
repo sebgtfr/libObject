@@ -17,8 +17,8 @@ t_bool				number_great(t_number const *this,
 
       if (this->_length == num->_length)
 	{
-	  int			res = strcmp(NUMBER_DATA(this),
-					     NUMBER_DATA(num));
+	  int			res = strcmp(number_data(this),
+					     number_data(num));
 	  if (!res)
 	    return (false);
 	  thisIsGreater = CAST_BOOL(res > 0);

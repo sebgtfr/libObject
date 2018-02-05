@@ -19,8 +19,8 @@ static void	       		number_sumGetResSign(t_number const *a,
 
   if ((a->_length) == (b->_length))
     {
-      int			res = strcmp(NUMBER_NUM_ABS(a),
-					     NUMBER_NUM_ABS(b));
+      int			res = strcmp(number_num_abs(a),
+					     number_num_abs(b));
 
       aIsGreater = ((a->_sign != b->_sign) && (!res)) ? a->_sign : CAST_BOOL(res >= 0);
     }
@@ -41,8 +41,8 @@ static void	       		number_sumGetResSign(t_number const *a,
 static t_number			*number_add(t_number const *a, t_number const *b,
 					    t_number *res)
 {
-  char const			*numA = NUMBER_UNIT(a);
-  char const			*numB = NUMBER_UNIT(b);
+  char const			*numA = number_unit(a);
+  char const			*numB = number_unit(b);
   char				*numRes;
   uint64_t			len = 0;
   uint8_t			retenu = 0;
@@ -71,8 +71,8 @@ static t_number			*number_add(t_number const *a, t_number const *b,
 t_number			*number_sub(t_number const *a, t_number const *b,
 					    t_number *res)
 {
-  char const			*numA = NUMBER_UNIT(a);
-  char const			*numB = NUMBER_UNIT(b);
+  char const			*numA = number_unit(a);
+  char const			*numB = number_unit(b);
   char				*numRes;
   uint64_t			len = 0;
   uint8_t			retenu = 0;

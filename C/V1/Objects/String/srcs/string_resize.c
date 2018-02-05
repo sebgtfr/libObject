@@ -21,22 +21,23 @@
 *
 */
 t_bool				string_resize(t_string *this,
-					      uint64_t const capacity)
+                                  uint64_t const capacity)
 {
-  if (!capacity)
-    string_dtor(this);
-  else if (this->_capacity != capacity)
-    {
-      if (!(this->_data = realloc(this->_data, sizeof(char) * (capacity + 1))))
-	{
-	  this->_capacity = 0;
-	  this->_length = 0;
-	  return (false);
-	}
-      this->_capacity = capacity;
-      if (this->_length > this->_capacity)
-	this->_length = this->_capacity;
-      this->_data[this->_length] = '\0';
-    }
-  return (true);
+    if (!capacity)
+        string_dtor(this);
+    else if (this->_capacity != capacity)
+        {
+            if (!(this->_data = realloc(this->_data, sizeof(char) *
+                                        (capacity + 1))))
+                {
+                    this->_capacity = 0;
+                    this->_length = 0;
+                    return (false);
+                }
+            this->_capacity = capacity;
+            if (this->_length > this->_capacity)
+                this->_length = this->_capacity;
+            this->_data[this->_length] = g_nullchar;
+        }
+    return (true);
 }

@@ -19,20 +19,21 @@
 *
 */
 t_bool				string_assign(t_string *this, char const *data,
-					      uint64_t const n)
+                                  uint64_t const n)
 {
-  if (data)
-    {
-      uint64_t			dataLength = strlen(data);
-      uint64_t			size = (((!n) || (n > dataLength)) ? dataLength : n);
+    if (data)
+        {
+            uint64_t			dataLength = strlen(data);
+            uint64_t			size = (((!n) || (n > dataLength)) ?
+                                        dataLength : n);
 
-      if (!string_resize(this, size))
-	return (false);
-      (void)strncpy(this->_data, data, size);
-      this->_length = size;
-      this->_data[this->_length] = '\0';
-    }
-  else
-    string_dtor(this);
-  return (true);
+            if (!string_resize(this, size))
+                return (false);
+            (void)strncpy(this->_data, data, size);
+            this->_length = size;
+            this->_data[this->_length] = g_nullchar;
+        }
+    else
+        string_dtor(this);
+    return (true);
 }

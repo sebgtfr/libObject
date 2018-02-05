@@ -21,15 +21,15 @@
 */
 t_bool				string_push_back(t_string *this, char const c)
 {
-  if (c)
-    {
-      uint64_t			capacity = (this->_capacity - this->_length);
+    if (c)
+        {
+            uint64_t			capacity = this->_capacity - this->_length;
 
-      if (!capacity)
-	if (!(string_add_page_memory(this, 1)))
-	  return (false);
-      this->_data[this->_length++] = c;
-      this->_data[this->_length] = '\0';
-    }
-  return (true);
+            if (!capacity)
+                if (!(string_add_page_memory(this, 1)))
+                    return (false);
+            this->_data[this->_length++] = c;
+            this->_data[this->_length] = g_nullchar;
+        }
+    return (true);
 }

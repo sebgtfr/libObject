@@ -20,7 +20,7 @@ static unsigned int		ini_parse_section(t_ini *this, char const *buffer,
   unsigned int			spaceBegin = 0;
   t_bool			endParse = false;
 
-  if (STRING_EMPTY(&parse->_save))
+  if (string_empty(&parse->_save))
     {
       while (buffer[spaceBegin] &&
 	     ((buffer[spaceBegin] == ' ') || (buffer[spaceBegin] == '\t')))
@@ -89,7 +89,7 @@ static unsigned int		ini_parse_value(__attribute__((unused))t_ini *this,
   unsigned int			i = 0;
   unsigned int			spaceBegin = 0;
 
-  if (STRING_EMPTY(&parse->_save))
+  if (string_empty(&parse->_save))
     {
       while (buffer[spaceBegin] &&
 	     ((buffer[spaceBegin] == ' ') || (buffer[spaceBegin] == '\t')))
@@ -118,7 +118,7 @@ static unsigned int		ini_parse_value(__attribute__((unused))t_ini *this,
 	{
 	  if (!parse->_quote)
 	    string_trim(&parse->_save);
-	  if (!STRING_EMPTY(&parse->_save))
+	  if (!string_empty(&parse->_save))
 	    if(!(parse->_dataMap._value = strdup(parse->_save._data)))
 	      parse->_state = INI_PARSE_ERROR;
 	  if (!parse->_currentSection)

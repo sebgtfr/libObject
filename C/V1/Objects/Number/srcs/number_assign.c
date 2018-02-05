@@ -20,7 +20,7 @@ t_number			*number_assign_int(t_number *this,
   if (number_resize(this, i))
     {
       this->_length = i;
-      number_set_int(NUMBER_UNIT(this), number);
+      number_set_int(number_unit(this), number);
       this->_data[this->_length + 1] = '\0';
       return (this);
     }
@@ -33,7 +33,7 @@ t_number			*number_assign_string(t_number *this,
   uint64_t			i;
 
   this->_sign = CAST_BOOL(number[0] != '-');
-  number += NUMBER_ISNEG(this);
+  number += number_isNeg(this);
   for (i = 0;(number[i] && IS_NUMBER(number[i])); ++i);
   if (number_resize(this, i))
     {
@@ -59,8 +59,8 @@ t_number			*number_assign(t_number *this,
       break;
     case NUMBER_UNDEFINED:
     default:
-      *this = _NUMBER_INIT_;
+      *this = g_defaultNumber;
       break;
     }
-  return (false);
+  return ((t_number *)g_nullptr);
 }

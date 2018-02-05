@@ -10,7 +10,7 @@
 
 # include <stdint.h>
 
-typedef uint8_t			t_bool;
+typedef uint8_t                 t_bool;
 
 /**
 * \brief		        Convertie une variable ou une expression en booleén.
@@ -19,24 +19,30 @@ typedef uint8_t			t_bool;
 * \return			0 pour false.
 * \return			1 pour true.
 */
-# define CAST_BOOL(var)		(!(!(var)))
+# define CAST_BOOL(var)         (!(!(var)))
 
-# ifndef false
+# ifndef FALSE
 /**
 * \brief		        Défini la contante false
 * \details		        Défini la constante false avec la valeur 0
 *				dans le cas où elle n'est pas défini.
 */
-#  define false			0
+#  define FALSE                 0
+
+extern t_bool const             false;
+
 # endif /* !false */
 
-# ifndef true
+# ifndef TRUE
 /**
 * \brief		        Défini la contante true
 * \details		        Défini la constante true avec comme valeur tout sauf 0
 *				dans le cas où elle n'est pas défini.
 */
-#  define true			!false
+#  define TRUE                  !FALSE
+
+extern t_bool const             true;
+
 # endif /* !true */
 
 #endif /* !BOOL_H_ */

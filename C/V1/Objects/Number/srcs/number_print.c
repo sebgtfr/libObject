@@ -11,5 +11,5 @@
 void				number_print(t_number *this, int const fd)
 {
   if (this->_data && this->_length)
-    (void)write(fd, NUMBER_DATA(this), this->_length + NUMBER_ISNEG(this));
+    (void)write(fd, number_data(this), this->_length + number_isNeg(this));
 }

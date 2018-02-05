@@ -14,7 +14,7 @@ char			*number_init_res(t_number *res, uint64_t const size,
     {
       res->_sign = sign;
       res->_length = size;
-      return (NUMBER_UNIT(res));
+      return (number_unit(res));
     }
-  return (NULL);
+  return ((char *)g_nullptr);
 }

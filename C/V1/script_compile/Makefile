@@ -5,7 +5,7 @@
 ## Login   <le-mai_s@epitech.net>
 ## 
 ## Started on  Fri Dec 23 11:13:16 2016 Sébastien Le Maire
-## Last update Wed Jan 31 15:36:09 2018 Sébastien Le Maire
+## Last update Mon Feb  5 12:32:15 2018 Sébastien Le Maire
 ##
 
 ifndef RELEASE
@@ -22,14 +22,14 @@ endif
 
 ifeq ($(DEBUG), on)
 
-CFLAGS			+= -g -g3 -ggdb
+CFLAGS			+= -g -g3 -ggdb -ggdb3
 
 endif
 
 PATH_LIB		= $(RELEASE)/
 
 NAME			= $(PATH_LIB)libobjects.a
-OBJS			=
+OBJS			= $(DIR_BOOL)/bool.o
 
 CFLAGS			+= -Wall -Wextra -Werror
 CFLAGS			+= -I"$(INCLUDE)"
@@ -43,7 +43,6 @@ SRCS_STRING		+= $(PATH_STRING_SRCS)string_dtor.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_copy.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_reset.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_resize.c
-SRCS_STRING		+= $(PATH_STRING_SRCS)string_add_page_memory.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_assign.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_change.c
 SRCS_STRING		+= $(PATH_STRING_SRCS)string_push.c

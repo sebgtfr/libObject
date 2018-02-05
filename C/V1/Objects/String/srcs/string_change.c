@@ -19,20 +19,21 @@
 *
 */
 t_bool				string_change(t_string *this, char const *data,
-					      uint64_t const n)
+                                  uint64_t const n)
 {
-  if (data)
-    {
-      uint64_t			dataLength = strlen(data);
-      uint64_t			size = (((!n) || (n > dataLength)) ? dataLength : n);
-      uint64_t			capacity = this->_capacity;
+    if (data)
+        {
+            uint64_t			dataLength = strlen(data);
+            uint64_t			size = (((!n) || (n > dataLength)) ?
+                                        dataLength : n);
+            uint64_t			capacity = this->_capacity;
 
-      if ((capacity = (capacity < size) ? (size - capacity) : 0))
-	if (!(string_add_page_memory(this, capacity)))
-	  return (false);
-      (void)strncpy(this->_data, data, size);
-      this->_length = size;
-      this->_data[this->_length] = '\0';
-    }
-  return (true);
+            if ((capacity = (capacity < size) ? (size - capacity) : 0))
+                if (!(string_add_page_memory(this, capacity)))
+                    return (false);
+            (void)strncpy(this->_data, data, size);
+            this->_length = size;
+            this->_data[this->_length] = g_nullchar;
+        }
+    return (true);
 }

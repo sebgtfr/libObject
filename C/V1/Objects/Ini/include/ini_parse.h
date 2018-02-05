@@ -38,6 +38,6 @@ typedef unsigned int		(*t_ini_parse_state_action)(t_ini *,
 # define INI_IS_UPPER_ALPHA(c)	(((c) >= 'A') && ((c) <= 'Z'))
 # define INI_IS_NUMERIC(c)	(((c) >= '0') && ((c) <= '9'))
 
-# define _INI_PARSE_INIT_	(t_ini_parse){INI_PARSE_VOID, NULL, _INIT_INI_DATAMAP_, false, _INIT_STRING_}
+# define _INI_PARSE_INIT_	(t_ini_parse){INI_PARSE_VOID, NULL, _INIT_INI_DATAMAP_, false, g_defaultString}
 
 #endif /* !INI_PARSE_H_ */

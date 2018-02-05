@@ -6,13 +6,12 @@
 */
 
 #include <stdio.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include "number.h"
 
 t_number			*number_sub(t_number const *a, t_number const *b,
-					    t_number *res);
+                                t_number *res);
 
 static void			number_partial_copy(t_number const *this,
 						    uint64_t const size,
@@ -23,17 +22,17 @@ static void			number_partial_copy(t_number const *this,
 
   if (this->_length <= size)
     {
-      *left = _NUMBER_INIT_NULL_;
+      *left = g_nullNumber;
       rightSize = this->_length;
     }
   else
     {
       uint64_t			leftSize = this->_length - size;
 
-      *left = NUMBER_INIT(true, 0, leftSize, NUMBER_NUM_ABS(this));
+      *left = NUMBER_INIT(true, 0, leftSize, number_num_abs(this));
       rightSize = size;
     }
-  *right = NUMBER_INIT(false, 0, rightSize, NUMBER_UNIT(this) + 1 - rightSize);
+  *right = NUMBER_INIT(false, 0, rightSize, number_unit(this) + 1 - rightSize);
   while ((*left->_data == '0') && (left->_length > 1))
     {
       ++left->_data;
@@ -50,11 +49,11 @@ static t_number			*number_tenPower(t_number const *this,
 						 t_number *res,
 						 uint64_t const power)
 {
-  if (NUMBER_ISZERO(this))
+  if (number_isZero(this))
     return (number_assign_string(res, "0\0"));
   if (number_resize(res, this->_length + power))
     {
-      char			*digit = NUMBER_NUM_ABS(res);
+      char			*digit = number_num_abs(res);
 
       res->_length = 0;
       while (res->_length < res->_capacity)
@@ -76,10 +75,10 @@ static void			number_karatsuba_expression(uint64_t const size,
 							    t_number *abcd,
 							    t_number *res)
 {
-  t_number			tenK = _NUMBER_INIT_;
-  t_number			ten2K = _NUMBER_INIT_;
-  t_number			resACBD = _NUMBER_INIT_;
-  t_number			resABCD = _NUMBER_INIT_;
+  t_number			tenK = g_defaultNumber;
+  t_number			ten2K = g_defaultNumber;
+  t_number			resACBD = g_defaultNumber;
+  t_number			resABCD = g_defaultNumber;
 
   number_addition(number_addition(number_tenPower(ac, &ten2K, size * 2),
 				  number_tenPower(number_subtraction(number_addition(ac, bd,
@@ -98,7 +97,7 @@ static void			number_setGreater(t_number const *a,
 						  t_number const *greater[2])
 {
   if (((a->_length == b->_length) ?
-       CAST_BOOL(strcmp(NUMBER_NUM_ABS(a), NUMBER_NUM_ABS(b)) > 0) :
+       CAST_BOOL(strcmp(number_num_abs(a), number_num_abs(b)) > 0) :
        CAST_BOOL(a->_length > b->_length)))
     {
       greater[0] = a;
@@ -119,11 +118,11 @@ static t_number			*number_karatsuba(t_number const *numA,
   t_number			b;
   t_number			c;
   t_number			d;
-  t_number			ac = _NUMBER_INIT_;
-  t_number			bd = _NUMBER_INIT_;
-  t_number			abcd = _NUMBER_INIT_;
-  t_number			resAB = _NUMBER_INIT_;
-  t_number			resCD = _NUMBER_INIT_;
+  t_number			ac = g_defaultNumber;
+  t_number			bd = g_defaultNumber;
+  t_number			abcd = g_defaultNumber;
+  t_number			resAB = g_defaultNumber;
+  t_number			resCD = g_defaultNumber;
   uint64_t			size = ((numA->_length > numB->_length) ?
 					numA->_length : numB->_length);
   t_number const		*greaterAB[2];
@@ -153,8 +152,8 @@ static t_number			*number_mult(t_number const *a, t_number const *b)
 
   if (res)
     {
-      if (NUMBER_ISZERO(a) || NUMBER_ISZERO(b) ||
-	  ((a->_length + b->_length) <= _NUMBER_MAXLENGHT_INT_))
+      if (number_isZero(a) || number_isZero(b) ||
+	  ((a->_length + b->_length) <= g_numberMaxLenghtInt))
 	{
 	  if ((res = number_assign_int(res, number_integer(a) * number_integer(b))))
 	    res->_sign = resSign;

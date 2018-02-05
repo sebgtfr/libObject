@@ -15,8 +15,8 @@ int				main(int ac, char **av)
       number_ctor(&b, NUMBER_STRING, (uint64_t)av[2]);
       number_ctor(&res, NUMBER_UNDEFINED, (uint64_t)NULL);
       if (number_multiplication(&a, &b, &res))
-	(void)printf("\n%s * %s = %s\n\n", NUMBER_DATA(&a), NUMBER_DATA(&b),
-		     NUMBER_DATA(&res));
+	(void)printf("\n%s * %s = %s\n\n", number_data(&a), number_data(&b),
+		     number_data(&res));
 
 
       int64_t			numA = number_integer(&a);

@@ -8,6 +8,20 @@
 #include <string.h>
 #include "mystring.h"
 
+/*
+** Definition of global.
+*/
+
+#ifdef __STRING_NULLPTR_DEFINE__
+
+void const * const      g_nullptr = (void *)0;
+
+#endif /* !__STRING_NULLPTR_DEFINE__ */
+
+char const              g_nullchar = '\0';
+
+t_string const          g_defaultString = _INIT_STRING_;
+
 /**
 * \brief			Construteur de l'objet t_string
 * \details			Initialise un objet t_string ({this}) pouvant contenir
@@ -20,18 +34,18 @@
 */
 t_bool				string_ctor(t_string *this, char const *data)
 {
-  if (data)
-    {
-      if (!(this->_data = strdup(data)))
-	{
-	  this->_length = 0;
-	  this->_capacity = 0;
-	  return (false);
-	}
-      this->_capacity = strlen(this->_data);
-      this->_length = this->_capacity;
-    }
-  else
-    *this = _INIT_STRING_;
-  return (true);
+    if (data)
+        {
+            if (!(this->_data = strdup(data)))
+                {
+                    this->_length = 0;
+                    this->_capacity = 0;
+                    return (false);
+                }
+            this->_capacity = strlen(this->_data);
+            this->_length = this->_capacity;
+        }
+    else
+        *this = g_defaultString;
+    return (true);
 }
