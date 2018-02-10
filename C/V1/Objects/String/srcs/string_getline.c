@@ -41,12 +41,8 @@ static t_bool			string_getline_getsave(t_string *this,
     while (((*save)[size]) && ((*save)[size] != l_newline))
         ++size;
     if (size)
-        {
-            if (!string_change(this, *save, size))
-                return (false);
-        }
-    else
-        string_reset(this);
+        if (!string_change(this, *save, size))
+            return (false);
     if ((*save)[size])
         {
             *end = true;
@@ -68,12 +64,8 @@ static t_bool			string_getline_concat(t_string *this,
     while ((buffer[size]) && (buffer[size] != l_newline))
         ++size;
     if (size)
-        {
-            if (!string_concat(this, buffer, size))
-                return (false);
-        }
-    else
-        string_reset(this);
+        if (!string_concat(this, buffer, size))
+            return (false);
     if (buffer[size] == l_newline)
         {
             *end = true;
@@ -102,18 +94,15 @@ t_bool				string_getline(t_string *this, int const fd)
     char			buffer[l_stringBufferSize + 1];
     t_bool			end = false;
 
+    string_reset(this);
     if (save)
-        {
-            if (!string_getline_getsave(this, &save, &end))
-                return (false);
-        }
-    else
-        string_reset(this);
+        if (!string_getline_getsave(this, &save, &end))
+            return (false);
     while ((!end) && ((ret = read(fd, (void *)buffer, l_stringBufferSize)) > 0))
         {
             buffer[ret] = g_nullchar;
             if (!string_getline_concat(this, &save, buffer, &end))
                 return (false);
         }
-    return (!((ret <= 0) && (!end)));
+    return (!((ret < 0) || (ret == 0 && !this->_length)));
 }
