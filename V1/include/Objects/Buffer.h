@@ -31,10 +31,13 @@ extern "C" {
 
 	/* Ctor & Dtor */
 	extern _OBJECTS_BUFFER_		Buffer_ctor(size_t const capacity);
+	extern _OBJECTS_BUFFER_		*Buffer_new(size_t const capacity);
 	extern _OBJECTS_BUFFER_		Buffer_ctorCopy(_OBJECTS_BUFFER_ const *copy);
+	extern _OBJECTS_BUFFER_		*Buffer_newCopy(_OBJECTS_BUFFER_ const *copy);
 	extern void					Buffer_eq(_OBJECTS_BUFFER_ *self,
 										  _OBJECTS_BUFFER_ const *oth);
 	extern void					Buffer_dtor(_OBJECTS_BUFFER_ *self);
+	extern void					Buffer_delete(_OBJECTS_BUFFER_ *self);
 
 	/* Getters */
 	extern size_t				Buffer_getCapacity(_OBJECTS_BUFFER_ const *self);

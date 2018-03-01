@@ -15,9 +15,19 @@ _OBJECTS_BUFFER_				Buffer_ctor(size_t const capacity)
 	return Objects::Buffer(capacity);
 }
 
+_OBJECTS_BUFFER_				*Buffer_new(size_t const capacity)
+{
+	return new Objects::Buffer(capacity);
+}
+
 _OBJECTS_BUFFER_				Buffer_ctorCopy(_OBJECTS_BUFFER_ const *copy)
 {
 	return Objects::Buffer(*copy);
+}
+
+_OBJECTS_BUFFER_				*Buffer_newCopy(_OBJECTS_BUFFER_ const *copy)
+{
+	return new Objects::Buffer(*copy);
 }
 
 void							Buffer_eq(_OBJECTS_BUFFER_ *self,
@@ -30,6 +40,11 @@ void							Buffer_dtor(_OBJECTS_BUFFER_ *self)
 {
 	self->~Buffer();
 	static_cast<void>(::memset(reinterpret_cast<void *>(self), 0, __SIZEOF_BUFFER__));
+}
+
+void							Buffer_delete(_OBJECTS_BUFFER_ *self)
+{
+	delete self;
 }
 
 /* Getters */
