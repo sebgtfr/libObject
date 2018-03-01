@@ -1,5 +1,11 @@
+/**
+* \file				Char.cpp
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				25 Février 2018
+*/
 
-#include <string.h>
+#include "Objects/Memory.hpp"
 #include "Objects/Buffer.hpp"
 
 namespace						Objects
@@ -10,8 +16,9 @@ namespace						Objects
 		: _data(nullptr), _size(size), _capacity(capacity)
 	{
 		if (capacity)
-			this->_data = static_cast<uint8_t *>(::malloc(sizeof(uint8_t)
-														  * this->_capacity));
+			this->_data = static_cast<uint8_t *>(
+				Objects::Memory::alloc(sizeof(uint8_t)
+									   * this->_capacity));
 	}
 
 	/* Buffer */
@@ -24,9 +31,9 @@ namespace						Objects
 		: Objects::PrivateBuffer(copy._size, copy._capacity)
 	{
 		if (copy._data)
-			(void)::memcpy(reinterpret_cast<void *>(this->_data),
-						   reinterpret_cast<void *>(copy._data),
-						   this->_size);
+			Objects::Memory::copy(reinterpret_cast<void *>(this->_data),
+								  reinterpret_cast<void const *>(copy._data),
+								  this->_size);
 	}
 
 	Buffer						&Buffer::operator=(Buffer const &other)
@@ -35,26 +42,23 @@ namespace						Objects
 		{
 			this->_size = other._size;
 			this->_capacity = other._capacity;
-			if (this->_data)
-				::free(this->_data);
+			Objects::Memory::free(reinterpret_cast<void *&>(this->_data));
 			if (other._data)
 			{
-				this->_data = static_cast<uint8_t *>(::malloc(sizeof(uint8_t)
-															  * this->_capacity));
-				(void)::memcpy(reinterpret_cast<void *>(this->_data),
-							   reinterpret_cast<void *>(other._data),
-							   this->_size);
+				this->_data = static_cast<uint8_t *>(
+					Objects::Memory::alloc(sizeof(uint8_t)
+										   * this->_capacity));
+				Objects::Memory::copy(reinterpret_cast<void *>(this->_data),
+									  reinterpret_cast<void const *>(other._data),
+									  this->_size);
 			}
-			else
-				this->_data = nullptr;
 		}
 		return *this;
 	}
 
 	Buffer::~Buffer(void)
 	{
-		if (this->_data)
-			::free(this->_data);
+		Objects::Memory::free(reinterpret_cast<void *&>(this->_data));
 	}
 
 	/* Getters */
@@ -70,15 +74,12 @@ namespace						Objects
 		if (capacity != this->_capacity)
 		{
 			if ((this->_capacity = capacity) > 0)
-				this->_data = static_cast<uint8_t *>(::realloc(reinterpret_cast<void *>(this->_data),
-															   sizeof(uint8_t)
-															   * this->_capacity));
+				this->_data = static_cast<uint8_t *>(
+					Objects::Memory::realloc(reinterpret_cast<void *>(this->_data),
+											 sizeof(uint8_t)
+											 * this->_capacity));
 			else
-			{
-				if (this->_data)
-					::free(this->_data);
-				this->_data = nullptr;
-			}
+				Objects::Memory::free(reinterpret_cast<void *&>(this->_data));
 			if (this->_capacity < this->_size)
 				this->_size = this->_capacity;
 		}
@@ -102,11 +103,28 @@ namespace						Objects
 		{
 			if ((this->_capacity - this->_size) < size)
 				this->capacity(size - (this->_capacity - this->_size));
-			static_cast<void>(::memcpy(reinterpret_cast<void *>(this->_data +
-																this->_size),
-									   reinterpret_cast<void const *>(data),
-									   size));
+			Objects::Memory::copy(reinterpret_cast<void *>(this->_data +
+														   this->_size),
+								  reinterpret_cast<void const *>(data),
+								  size);
 			this->_size += size;
+		}
+	}
+
+	void						Buffer::shift(size_t nbLeftBytes)
+	{
+		if (this->_data)
+		{
+			if (nbLeftBytes >= this->_size)
+				this->clear();
+			else
+			{
+				this->_size -= nbLeftBytes;
+				Objects::Memory::move(static_cast<void *>(this->_data),
+									  static_cast<void const *>(this->_data
+																+ nbLeftBytes),
+									  this->_size);
+			}
 		}
 	}
 }

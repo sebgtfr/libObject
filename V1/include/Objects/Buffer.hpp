@@ -1,9 +1,16 @@
+/**
+* \file				Buffer.hpp
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				25 Février 2018
+*/
 
 #ifndef OBJECTS_BUFFER_HPP_
 # define OBJECTS_BUFFER_HPP_
 
 # include <stdint.h>
 # include <stdlib.h>
+# include "Objects/Bool.h"
 
 # ifdef __cplusplus
 namespace						Objects
@@ -57,6 +64,10 @@ struct							PrivateBuffer
 			{
 				return (i > this->_capacity) ? 0 : this->_data[i];
 			}
+		bool					empty(void) const
+			{
+				return !this->_size;
+			}
 
 		/* Setters */
 		void					capacity(size_t const capacity);
@@ -87,6 +98,8 @@ struct							PrivateBuffer
 			{
 				this->write(buffer.rawData(), buffer.size());
 			}
+
+		void					shift(size_t const nbLeftBytes);
 
 	}; /* END BUFFER */
 

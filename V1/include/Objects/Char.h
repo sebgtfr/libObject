@@ -1,3 +1,9 @@
+/**
+* \file				Char.h
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				23 Février 2018
+*/
 
 #ifndef OBJECTS_CHAR_H_
 # define OBJECTS_CHAR_H_

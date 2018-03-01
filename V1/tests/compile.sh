@@ -25,17 +25,39 @@ OBJECTS=("Bool" "Char" "Buffer")
 
 NB_OBJECTS=${#OBJECTS[@]}
 NB_LANGUAGES=${#LANGUAGES[@]}
+RELEASE="Release"
+
 
 make -C .. re && make -C .. clean
 
 echo -e "\n\033[01;33mBegining of compilations :\n"
 
+if [ ! -e $RELEASE ]
+then
+	mkdir $RELEASE
+fi
+
+for ((j=0; j < $NB_LANGUAGES; ++j))
+do
+	if [ ! -e "${RELEASE}/${LANGUAGES[$j]}" ]
+	then
+		mkdir "${RELEASE}/${LANGUAGES[$j]}"
+	fi
+done
+
 for ((i=0; i < $NB_OBJECTS; ++i))
 do
 	for ((j=0; j < $NB_LANGUAGES; ++j))
 	do
-		BINARY_NAME="Release/${LANGUAGES[$j]}/${OBJECTS[$i]}.exe"
-		rm -f $BINARY_NAME
+		BINARY_NAME="${RELEASE}/${LANGUAGES[$j]}/${OBJECTS[$i]}.exe"
+		if [ -f $BINARY_NAME ]
+		then
+			rm $BINARY_NAME
+		elif [ -e $BINARY_NAME ]
+		then
+			echo -e "\033[01;31mWarning ! ${BINARY_NAME} already exists but isn't a file !\033[00m"
+			continue
+		fi
 		SRC="Objects/${OBJECTS[$i]}/main.${LANGUAGES[$j]}"
 		if [ -f "$SRC" ]
 		then

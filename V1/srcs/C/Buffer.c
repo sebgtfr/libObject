@@ -1,3 +1,9 @@
+/**
+* \file				Buffer.c
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				25 Février 2018
+*/
 
 #include <string.h>
 #include "Objects/Buffer.h"
@@ -55,6 +61,11 @@ uint8_t							Buffer_atConst(_OBJECTS_BUFFER_ const *self,
 	return self->at(i);
 }
 
+bool							Buffer_empty(_OBJECTS_BUFFER_ const *self)
+{
+	return self->empty();
+}
+
 /* Setters */
 
 void							Buffer_setCapacity(_OBJECTS_BUFFER_ *self,
@@ -85,4 +96,10 @@ void							Buffer_concat(_OBJECTS_BUFFER_ *self,
 											  _OBJECTS_BUFFER_ const *buffer)
 {
 	self->write(*buffer);
+}
+
+void							Buffer_shift(_OBJECTS_BUFFER_ *self,
+											 size_t const nbLeftBytes)
+{
+	self->shift(nbLeftBytes);
 }

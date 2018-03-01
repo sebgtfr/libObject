@@ -12,6 +12,14 @@ int								main(void)
 	Buffer_eq(&buf2, &buf);
 	Buffer_write(&buf3, (uint8_t const *)&hw[0], sizeof(hw) + 1);
 	Buffer_concat(&buf4, &buf3);
+	Buffer_shift(&buf4, 6);
+
+	bool						testEmpty = Buffer_empty(&buf4);
+
+	Buffer_clear(&buf4);
+	Buffer_shift(&buf3, Buffer_size(&buf3));
+	testEmpty = Buffer_empty(&buf4);
+	testEmpty = Buffer_empty(&buf3);
 
 	Buffer_dtor(&buf);
 	Buffer_dtor(&buf2);

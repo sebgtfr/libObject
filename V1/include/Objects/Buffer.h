@@ -1,3 +1,9 @@
+/**
+* \file				Buffer.h
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				25 Février 2018
+*/
 
 #ifndef OBJECTS_BUFFER_H_
 # define OBJECTS_BUFFER_H_
@@ -39,6 +45,7 @@ extern "C" {
 										   size_t const i);
 	extern uint8_t				Buffer_atConst(_OBJECTS_BUFFER_ const *self,
 											   size_t const i);
+	extern bool					Buffer_empty(_OBJECTS_BUFFER_ const *self);
 
 	/* Setters */
 	extern void					Buffer_setCapacity(_OBJECTS_BUFFER_ *self,
@@ -53,6 +60,8 @@ extern "C" {
 											 size_t const size);
 	extern void					Buffer_concat(_OBJECTS_BUFFER_ *self,
 											  _OBJECTS_BUFFER_ const *buffer);
+	extern void					Buffer_shift(_OBJECTS_BUFFER_ *self,
+											 size_t const nbLeftBytes);
 
 # ifdef __cplusplus
 

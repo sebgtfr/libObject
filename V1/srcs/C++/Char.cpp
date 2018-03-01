@@ -1,3 +1,9 @@
+/**
+* \file				Char.cpp
+* \author			Sébastien Le Maire
+* \version			1.0
+* \date				23 Février 2018
+*/
 
 #include "Objects/Char.hpp"
 
