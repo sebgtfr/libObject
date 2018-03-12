@@ -21,7 +21,7 @@ namespace								Objects
 		enum							CodeError
 		{
 										BAD_ALLOC,
-										OUT_OF_RANGE,
+										READ_NULLPTR,
 										NO_ERROR
 		};
 

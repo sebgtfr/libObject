@@ -1,5 +1,5 @@
 /**
-* \file				Char.cpp
+* \file				Buffer.cpp
 * \author			Sébastien Le Maire
 * \version			1.0
 * \date				25 Février 2018

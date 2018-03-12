@@ -29,6 +29,7 @@ SRCS_CPP						= $(PATH_OBJECTS_CPP)Memory.cpp
 SRCS_CPP						+= $(PATH_OBJECTS_CPP)Exception.cpp
 SRCS_CPP						+= $(PATH_OBJECTS_CPP)Buffer.cpp
 SRCS_CPP						+= $(PATH_OBJECTS_CPP)Char.cpp
+SRCS_CPP						+= $(PATH_OBJECTS_CPP)String.cpp
 
 OBJS							= $(SRCS_C:.c=.o) $(SRCS_CPP:.cpp=.o)
 

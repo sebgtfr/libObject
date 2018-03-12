@@ -21,7 +21,7 @@ CXX=1
 LANGUAGES=("c" "cpp")
 COMPILER=("gcc" "g++")
 
-OBJECTS=("Bool" "Char" "Buffer")
+OBJECTS=("Bool" "Char" "Buffer" "String")
 
 NB_OBJECTS=${#OBJECTS[@]}
 NB_LANGUAGES=${#LANGUAGES[@]}

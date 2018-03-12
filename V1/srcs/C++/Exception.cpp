@@ -10,5 +10,5 @@
 char const * const Objects::Exception::MSGS_ERROR[Objects::Exception::NO_ERROR] =
 {
 	"bad allocation",
-	"index given is out of range"
+	"Trying to read on null pointer"
 };

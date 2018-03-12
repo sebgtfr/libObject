@@ -17,15 +17,15 @@ namespace						Objects
 {
 # endif /* !CPLUSPLUS */
 
-struct							PrivateBuffer
-{
-	uint8_t						*_data;
-	size_t						_size;
-	size_t						_capacity;
+	struct						PrivateBuffer
+	{
+		uint8_t					*_data;
+		size_t					_size;
+		size_t					_capacity;
 
 # ifdef __cplusplus
 
-	PrivateBuffer(size_t const size, size_t const capacity);
+		PrivateBuffer(size_t const size, size_t const capacity);
 
 #  define __SIZEOF_BUFFER__		sizeof(Objects::PrivateBuffer)
 
@@ -34,7 +34,7 @@ struct							PrivateBuffer
 #  define __SIZEOF_BUFFER__		sizeof(struct PrivateBuffer)
 
 # endif /* !CPLUSPLUS*/
-};
+	};
 
 # ifdef __cplusplus
 	class						Buffer : private Objects::PrivateBuffer
@@ -77,7 +77,7 @@ struct							PrivateBuffer
 				this->_size = 0;
 			}
 
-		/* operator */
+		/* Operator */
 		inline uint8_t			&operator[](size_t const i)
 			{
 				return this->at(i);
