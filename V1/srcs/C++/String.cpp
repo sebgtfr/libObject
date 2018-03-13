@@ -211,7 +211,7 @@ namespace						Objects
 
 	/* Methods */
 
-	size_t						String::find(Objects::Unicode::Char c) const
+	size_t						String::find(Objects::Unicode::Char const c) const
 	{
 		size_t					f = 0;
 
@@ -222,28 +222,94 @@ namespace						Objects
 	}
 
 	int							String::compare(char const * const str,
-												size_t n,
+												size_t const n,
 												size_t const begin) const
 	{
-		Objects::String			tmp;
-		int						ret;
+		int						ret = (str) ? -1 : 1;
 
-		tmp.len(str);
-		tmp._data = const_cast<char *>(str);
-		ret = this->compare(tmp, n, begin);
-		tmp._data = nullptr;
+		if (str && this->_data && begin < this->_capacity)
+			ret = (!n) ? strcmp(this->_data + begin, str) :
+				strncmp(this->_data + begin, str, n);
+		return (this->_data == str) ? 0 : ret;
+	}
+
+	Objects::String				String::uppercase(void) const
+	{
+		Objects::String			ret;
+		size_t					i = 0;
+
+		ret.capacity(this->_capacity);
+		ret._size = this->_size;
+		ret._unicodeSize = this->_unicodeSize;
+		for (Objects::String::Iterator it = this->begin();
+			 it != this->end(); ++it)
+		{
+			char				c = *it;
+
+			ret[i++] = ((c >= 'a' && c <= 'z') ? (c - 32) : c);
+		}
 		return ret;
 	}
 
-	int							String::compare(Objects::String const &str,
-												size_t n,
-												size_t const begin) const
+	Objects::String				String::lowercase(void) const
 	{
-		int						ret = (str._data) ? -1 : 1;
+		Objects::String			ret;
+		size_t					i = 0;
 
-		if (this->_data && begin < this->_capacity)
-			ret = (!n) ? strcmp(this->_data + begin, str._data) :
-				strncmp(this->_data + begin, str._data, n);
-		return (this->_data == str._data) ? 0 : ret;
+		ret.capacity(this->_capacity);
+		ret._size = this->_size;
+		ret._unicodeSize = this->_unicodeSize;
+		for (Objects::String::Iterator it = this->begin();
+			 it != this->end(); ++it)
+		{
+			char				c = *it;
+
+			ret[i++] = ((c >= 'A' && c <= 'Z') ? (c + 32) : c);
+		}
+		return ret;
+	}
+
+	Objects::String				String::reverse(void) const
+	{
+		Objects::String			ret;
+		size_t					i = this->_capacity;
+
+		ret.capacity(this->_capacity);
+		ret._size = this->_size;
+		ret._unicodeSize = this->_unicodeSize;
+		for (Objects::Unicode::String::Iterator it = this->unicodeBegin();
+			 it != this->unicodeEnd(); ++it)
+		{
+			Objects::Unicode::Char	c = *it;
+			uint8_t					unicodeLen = c.size();
+			uint8_t					j = 0;
+
+			i -= unicodeLen;
+			for (int8_t b = 24; j < unicodeLen && b >= 0; b -= 8)
+			{
+				uint8_t					uc = (uint8_t)((*c >> b) & 0xFF);
+
+				if (uc)
+					ret[i + j++] = uc;
+			}
+		}
+		return ret;
+	}
+
+	Objects::String				String::substr(size_t const begin,
+											   size_t size) const
+	{
+		Objects::String			ret;
+
+		if (size && begin < this->_capacity)
+		{
+			if ((begin + size) > this->_capacity)
+				size = this->_capacity - begin;
+			ret.dup(reinterpret_cast<char const *>(this->_data + begin),
+					size);
+			ret._capacity = size;
+			ret.len(ret._data);
+		}
+		return ret;
 	}
 }

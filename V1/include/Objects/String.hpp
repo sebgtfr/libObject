@@ -10,11 +10,13 @@
 
 # include <stdint.h>
 # include <stdlib.h>
-# include "Objects/Exception.hpp"
-# include "Objects/Char.hpp"
+# include "Objects/Char.h"
 # include "Objects/Bool.h"
 
 # ifdef __cplusplus
+
+# include "Objects/Exception.hpp"
+
 namespace						Objects
 {
 # endif /* !CPLUSPLUS */
@@ -100,7 +102,12 @@ namespace						Objects
 					}
 				inline Objects::Unicode::String::Iterator	&operator--(void)
 					{
-						this->_current -= Objects::Unicode::Char::size(*this->_current);
+						int8_t								i = -1;
+
+						while (this->_current[i] & 0x80 &&
+							   Objects::Unicode::Char::size(this->_current[i]) == 1)
+							--i;
+						this->_current += i;
 						return *this;
 					}
 				Objects::Unicode::String::Iterator			operator++(int)
@@ -113,8 +120,12 @@ namespace						Objects
 				Objects::Unicode::String::Iterator	  		operator--(int)
 					{
 						Objects::Unicode::String::Iterator	it(this->_current);
+						int8_t								i = -1;
 
-						this->_current -= Objects::Unicode::Char::size(*this->_current);
+						while (this->_current[i] & 0x80 &&
+							   Objects::Unicode::Char::size(this->_current[i]) == 1)
+							--i;
+						this->_current += i;
 						return it;
 					}
 				inline Objects::Unicode::Char				operator*(void)
@@ -198,6 +209,12 @@ namespace						Objects
 			{
 				return this->_data[(i > this->_capacity) ? this->_capacity : i];
 			}
+		inline Objects::Unicode::Char	unicodeAt(size_t const i) const
+			{
+				return Objects::Unicode::Char(this->_data +
+											  ((i > this->_capacity) ?
+											  this->_capacity : i));
+			}
 		bool					empty(void) const
 			{
 				return !this->_size;
@@ -206,7 +223,6 @@ namespace						Objects
 		/* Setters */
 		void					capacity(size_t const capacity);
 		void					resize(size_t const size);
-		void					clear(void);
 
 		/* Operator */
 		inline char				*operator*(void) const
@@ -297,17 +313,33 @@ namespace						Objects
 														  this->_size :
 														  nullptr);
 			}
-		size_t					find(Objects::Unicode::Char c) const;
+		size_t					find(Objects::Unicode::Char const c) const;
 		int						compare(char const * const str,
-										size_t n = 0,
+										size_t const n = 0,
 										size_t const begin = 0) const;
-		int						compare(Objects::String const &str,
-										size_t n = 0,
-										size_t const begin = 0) const;
+		inline int				compare(Objects::String const &str,
+										size_t const n = 0,
+										size_t const begin = 0) const
+			{
+				return this->compare(str._data, n, begin);
+			}
+		Objects::String			uppercase(void) const;
+		Objects::String			lowercase(void) const;
+		Objects::String			reverse(void) const;
+		Objects::String			substr(size_t const begin,
+									   size_t size) const;
 	};
-
-
 }
+
+# include <iostream>
+
+inline std::ostream				&operator<<(std::ostream &os,
+											Objects::String const &str)
+{
+	os << ((str.empty()) ? "NULL" : *str);
+	return os;
+}
+
 # endif /* !CPLUSPLUS */
 
 

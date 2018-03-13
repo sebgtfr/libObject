@@ -34,7 +34,7 @@ extern "C" {
 	extern _OBJECTS_BUFFER_		*Buffer_new(size_t const capacity);
 	extern _OBJECTS_BUFFER_		Buffer_ctorCopy(_OBJECTS_BUFFER_ const *copy);
 	extern _OBJECTS_BUFFER_		*Buffer_newCopy(_OBJECTS_BUFFER_ const *copy);
-	extern void					Buffer_eq(_OBJECTS_BUFFER_ *self,
+	extern _OBJECTS_BUFFER_		*Buffer_eq(_OBJECTS_BUFFER_ *self,
 										  _OBJECTS_BUFFER_ const *oth);
 	extern void					Buffer_dtor(_OBJECTS_BUFFER_ *self);
 	extern void					Buffer_delete(_OBJECTS_BUFFER_ *self);
@@ -43,7 +43,6 @@ extern "C" {
 	extern size_t				Buffer_getCapacity(_OBJECTS_BUFFER_ const *self);
 	extern size_t				Buffer_size(_OBJECTS_BUFFER_ const *self);
 	extern uint8_t				*Buffer_rawData(_OBJECTS_BUFFER_ const *self);
-# define Buffer_at				*Buffer_at
 	extern uint8_t				Buffer_at(_OBJECTS_BUFFER_ *self,
 										   size_t const i);
 	extern uint8_t				Buffer_atConst(_OBJECTS_BUFFER_ const *self,

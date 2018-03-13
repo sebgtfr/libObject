@@ -30,10 +30,11 @@ _OBJECTS_BUFFER_				*Buffer_newCopy(_OBJECTS_BUFFER_ const *copy)
 	return new Objects::Buffer(*copy);
 }
 
-void							Buffer_eq(_OBJECTS_BUFFER_ *self,
-										  _OBJECTS_BUFFER_ const *oth)
+_OBJECTS_BUFFER_				*Buffer_eq(_OBJECTS_BUFFER_ *self,
+										   _OBJECTS_BUFFER_ const *oth)
 {
 	*self = *oth;
+	return self;
 }
 
 void							Buffer_dtor(_OBJECTS_BUFFER_ *self)
@@ -64,14 +65,8 @@ uint8_t							*Buffer_rawData(_OBJECTS_BUFFER_ const *self)
 	return self->rawData();
 }
 
-uint8_t							Buffer_at(_OBJECTS_BUFFER_ *self,
+uint8_t							Buffer_at(_OBJECTS_BUFFER_ const *self,
 										  size_t const i)
-{
-	return &self->at(i);
-}
-
-uint8_t							Buffer_atConst(_OBJECTS_BUFFER_ const *self,
-											   size_t const i)
 {
 	return self->at(i);
 }
