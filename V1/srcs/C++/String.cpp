@@ -47,9 +47,8 @@ namespace						Objects
 	void						PrivateString::dup(char const * const str,
 												   size_t const size)
 	{
-		this->_data = static_cast<char *>(
-			Objects::Memory::alloc(sizeof(char)
-								   * (size + 1)));
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * (size + 1)));
 		this->copy(str, size);
 	}
 
@@ -64,6 +63,11 @@ namespace						Objects
 	}
 
 	/* String */
+	String::String(Objects::Unicode::Char const c)
+		: PrivateString(c.toString()._char)
+	{
+	}
+
 	String::String(char const * const str)
 		: PrivateString(str)
 	{
@@ -78,13 +82,19 @@ namespace						Objects
 	{
 		if (&other != this)
 		{
-			Objects::Memory::free(reinterpret_cast<void *&>(this->_data));
+
 			this->_size = other._size;
 			this->_unicodeSize = other._unicodeSize;
-			this->_capacity = other._capacity;
+			if (this->_capacity != other._capacity)
+			{
+				this->_capacity = other._capacity;
+				Objects::Memory::free(reinterpret_cast<void *&>(this->_data));
+				this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																		 * (this->_capacity + 1)));
+			}
 			if (other._data)
-				this->dup(reinterpret_cast<char const *>(other._data),
-						  this->_capacity);
+				this->copy(reinterpret_cast<char const *>(other._data),
+						   this->_capacity);
 		}
 		return *this;
 	}
@@ -95,6 +105,13 @@ namespace						Objects
 	}
 
 	/* Setters */
+
+	char						&String::at(size_t const i)
+	{
+		if (i > this->_capacity)
+			this->capacity(i);
+		return this->_data[i];
+	}
 
 	void						String::capacity(size_t const capacity)
 	{
@@ -128,11 +145,13 @@ namespace						Objects
 		}
 	}
 
-	char						&String::at(size_t const i)
+	void						String::clear(void)
 	{
-		if (i > this->_capacity)
-			this->capacity(i);
-		return this->_data[i];
+		if (this->_data)
+		{
+			this->_size = 0;
+			this->_data[0] = '\0';
+		}
 	}
 
 	/* Operator */
@@ -151,33 +170,6 @@ namespace						Objects
 				this->dup(str, this->_capacity);
 			}
 		}
-		return *this;
-	}
-
-	Objects::String				&String::operator+=(char const * const str)
-	{
-		Objects::String			tmp;
-		size_t					freeSpace = this->_capacity - this->_size;
-
-		tmp.len(str);
-		if (tmp._capacity > freeSpace)
-			this->capacity(this->_capacity + (tmp._capacity - freeSpace));
-		this->copy(str, tmp._capacity, this->_size);
-		this->_size += tmp._size;
-		this->_unicodeSize += tmp._unicodeSize;
-		return *this;
-	}
-
-	Objects::String				&String::operator+=(Objects::String const &str)
-	{
-		size_t					freeSpace = this->_capacity - this->_size;
-
-		if (str._capacity > freeSpace)
-			this->capacity(this->_capacity + (str._capacity - freeSpace));
-		this->copy(reinterpret_cast<char const * const>(str._data),
-				   str._capacity, this->_size);
-		this->_size += str._size;
-		this->_unicodeSize += str._unicodeSize;
 		return *this;
 	}
 
@@ -221,6 +213,19 @@ namespace						Objects
 		return f;
 	}
 
+	size_t						String::find(char const * const str) const
+	{
+		char const				*i = this->_data;
+		char const				*istr = str;
+
+		while (*i && *istr)
+		{
+			istr = (*i == *istr) ? (istr + 1) : str;
+			++i;
+		}
+		return static_cast<size_t>(i - this->_data - (istr - str));
+	}
+
 	int							String::compare(char const * const str,
 												size_t const n,
 												size_t const begin) const
@@ -231,6 +236,51 @@ namespace						Objects
 			ret = (!n) ? strcmp(this->_data + begin, str) :
 				strncmp(this->_data + begin, str, n);
 		return (this->_data == str) ? 0 : ret;
+	}
+
+	Objects::String				&String::append(char const * const str)
+	{
+		Objects::String			tmp;
+		size_t					freeSpace = this->_capacity - this->_size;
+
+		tmp.len(str);
+		if (tmp._size > freeSpace)
+			this->capacity(this->_capacity + (tmp._size - freeSpace));
+		this->copy(str, tmp._size, this->_size);
+		this->_size += tmp._size;
+		this->_unicodeSize += tmp._unicodeSize;
+		return *this;
+	}
+
+	Objects::String				&String::append(Objects::String const &str)
+	{
+		size_t					freeSpace = this->_capacity - this->_size;
+
+		if (str._size > freeSpace)
+			this->capacity(this->_capacity + (str._size - freeSpace));
+		this->copy(reinterpret_cast<char const * const>(str._data),
+				   str._size, this->_size);
+		this->_size += str._size;
+		this->_unicodeSize += str._unicodeSize;
+		return *this;
+	}
+
+	void						String::shift(size_t const nbLeftBytes)
+	{
+		if (this->_data)
+		{
+			if (nbLeftBytes >= this->_size)
+				this->clear();
+			else
+			{
+				this->_size -= nbLeftBytes;
+				Objects::Memory::move(static_cast<void *>(this->_data),
+									  static_cast<void const *>(this->_data
+																+ nbLeftBytes),
+									  this->_size);
+				this->_data[this->_size] = '\0';
+			}
+		}
 	}
 
 	Objects::String				String::uppercase(void) const
@@ -301,15 +351,29 @@ namespace						Objects
 	{
 		Objects::String			ret;
 
-		if (size && begin < this->_capacity)
+		if (size && begin < this->_size)
 		{
-			if ((begin + size) > this->_capacity)
-				size = this->_capacity - begin;
-			ret.dup(reinterpret_cast<char const *>(this->_data + begin),
-					size);
+			if ((begin + size) > this->_size)
+				size = this->_size - begin;
+			ret.dup(reinterpret_cast<char const *>(this->_data + begin), size);
 			ret._capacity = size;
 			ret.len(ret._data);
 		}
 		return ret;
+	}
+
+	Objects::String				String::substr(size_t const begin,
+											   Objects::Unicode::Char const end) const
+	{
+		if (begin < this->_size)
+		{
+			size_t				f = 0;
+
+			for (Objects::Unicode::String::Iterator it = this->_data + begin;
+				 it != this->unicodeEnd() && !(*it == end); ++it)
+				f += (*it).size();
+			return this->substr(begin, f + ((this->_data[f]) & 0x01));
+		}
+		return Objects::String();
 	}
 }

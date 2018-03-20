@@ -17,7 +17,7 @@ int								main(void)
 	size_t						e = copy4Name.find("é");
 	size_t						euro = copy4Name.find("€");
 
-	std::cout << "Dans la phrase : \"" << copy4Name << "\""
+	std::cout << "Dans la phrase : \"" << copy4Name << "\" "
 			  << "le caractère '" << copy4Name.unicodeAt(e)
 			  << "' commence en mémoire en position "
 			  << e << " et le caratère '" << copy4Name.unicodeAt(euro)
@@ -52,7 +52,7 @@ int								main(void)
 	Objects::String				johnlc = strName.lowercase();
 	Objects::String				johnuc = strName.uppercase();
 
-	copy4Name = copy4Name.substr(0, copy4Name.find('n') + 1).reverse();
+	copy4Name = copy4Name.substr(0, "n").reverse();
 
 	std::cout << "reverse : " << copy4Name << std::endl;
 

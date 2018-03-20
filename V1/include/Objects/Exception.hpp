@@ -22,6 +22,7 @@ namespace								Objects
 		{
 										BAD_ALLOC,
 										READ_NULLPTR,
+										OUT_OF_RANGE,
 										NO_ERROR
 		};
 

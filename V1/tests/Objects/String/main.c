@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include "Objects/String.h"
 
+#ifdef __cplusplus
+
+using namespace					Objects;
+
+#endif
+
 int								main(void)
 {
 	char const * const			name = "Sébastien";
@@ -67,10 +73,8 @@ int								main(void)
 	String						johnlc = String_lowercase(&strName);
 	String						johnuc = String_uppercase(&strName);;
 
-	String						sub = String_substr(&copy4Name,
-													0,
-													String_find(&copy4Name,
-																UnicodeChar_ctor("n") + 1));
+	String						sub = String_substrToUnicode(&copy4Name, 0,
+															 UnicodeChar_ctor("n"));
 	String						rev = String_reverse(&sub);
 
 	String_eq(&copy4Name, &rev);
@@ -80,7 +84,7 @@ int								main(void)
 
 	(void)printf("reverse : %s\n", String_rawData(&copy4Name));
 
-	UnicodeStringIterator revIt = String_unicodeEnd(&copy4Name);
+	_OBJECTS_UNICODE_STRING_ITERATOR_ revIt = String_unicodeEnd(&copy4Name);
 
 	while (!Unicode_String_Iterator_eq((revIt = Unicode_String_Iterator_prev(revIt)),
 									   String_unicodeBegin(&copy4Name)))

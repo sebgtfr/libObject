@@ -9,26 +9,31 @@
 
 UnicodeChar						UnicodeChar_ctor(char const *str)
 {
-	Objects::Unicode::Char		c(str);
-
-	return *c;
+	return Objects::Unicode::Char(str);
 }
 
 uint8_t							UnicodeCharSize(char const c)
 {
-	return Objects::Unicode::Char(c);
+	return Objects::Unicode::Char::size(c);
 }
 
 uint8_t							UnicodeChar_size(UnicodeChar const unicode)
 {
-	Objects::Unicode::Char		c(unicode);
-
-	return c.size();
+	return Objects::Unicode::Char(unicode).size();
 }
 
 void							UnicodeChar_print(UnicodeChar const unicode)
 {
-	Objects::Unicode::Char		c(unicode);
+	std::cout << Objects::Unicode::Char(unicode);
+}
 
-	std::cout << c;
+uint8_t							UnicodeChar_toString(UnicodeChar const unicode,
+													 char *dest)
+{
+	Objects::Unicode::CharInt	ci = Objects::Unicode::Char(unicode).toString();
+	char const					*i = (char const *)ci._char;
+
+	while ((*dest = *i++))
+		++dest;
+	return (uint8_t)(i - (char const *)ci._char);
 }

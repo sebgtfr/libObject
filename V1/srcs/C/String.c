@@ -109,6 +109,11 @@ _OBJECTS_STRING_				*String_assign(_OBJECTS_STRING_ *self,
 	return self;
 }
 
+void							String_clear(_OBJECTS_STRING_ *self)
+{
+	self->clear();
+}
+
 /* Methods */
 _OBJECTS_STRING_				*String_concat(_OBJECTS_STRING_ *self,
 											   char const * const str)
@@ -147,7 +152,7 @@ _OBJECTS_UNICODE_STRING_ITERATOR_	String_unicodeEnd(_OBJECTS_STRING_ const *self
 size_t							String_find(_OBJECTS_STRING_ const *self,
 											UnicodeChar const c)
 {
-	return self->find(c);
+	return self->find(Objects::Unicode::Char(c));
 }
 
 int								String_cmp(_OBJECTS_STRING_ const *self,
@@ -178,6 +183,12 @@ int								String_ncompare(_OBJECTS_STRING_ const *self,
 	return self->compare(*str, n, begin);
 }
 
+void							String_shift(_OBJECTS_STRING_ *self,
+											 size_t const nbLeftBytes)
+{
+	self->shift(nbLeftBytes);
+}
+
 _OBJECTS_STRING_				String_uppercase(_OBJECTS_STRING_ const *self)
 {
 	return self->uppercase();
@@ -194,10 +205,30 @@ _OBJECTS_STRING_				String_reverse(_OBJECTS_STRING_ const *self)
 }
 
 _OBJECTS_STRING_				String_substr(_OBJECTS_STRING_ const *self,
-											  size_t const begin,
-											  size_t size)
+											  size_t const begin)
+{
+	return self->substr(begin);
+}
+
+_OBJECTS_STRING_				String_nsubstr(_OBJECTS_STRING_ const *self,
+											   size_t const begin,
+											   size_t size)
 {
 	return self->substr(begin, size);
+}
+
+_OBJECTS_STRING_				String_substrToUnicode(_OBJECTS_STRING_ const *self,
+													   size_t const begin,
+													   UnicodeChar const end)
+{
+	return self->substr(begin, Objects::Unicode::Char(end));
+}
+
+_OBJECTS_STRING_				String_substrUnicode(_OBJECTS_STRING_ const *self,
+													 UnicodeChar const begin,
+													 UnicodeChar const end)
+{
+	return self->substr(Objects::Unicode::Char(begin), Objects::Unicode::Char(end));
 }
 
 void							String_print(_OBJECTS_STRING_ const *self)

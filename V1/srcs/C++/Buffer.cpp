@@ -111,7 +111,7 @@ namespace						Objects
 		}
 	}
 
-	void						Buffer::shift(size_t nbLeftBytes)
+	void						Buffer::shift(size_t const nbLeftBytes)
 	{
 		if (this->_data)
 		{

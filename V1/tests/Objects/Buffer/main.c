@@ -1,6 +1,12 @@
 
 #include "Objects/Buffer.h"
 
+#ifdef __cplusplus
+
+using namespace					Objects;
+
+#endif
+
 int								main(void)
 {
 	Buffer						buf = Buffer_ctor(1024);

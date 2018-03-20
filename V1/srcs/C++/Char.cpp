@@ -136,23 +136,15 @@ namespace								Objects
 			}
 			return 1;
 		}
+
+		Objects::Unicode::CharInt		Char::toString(void) const
+		{
+			Objects::Unicode::CharInt	strUnicode;
+			uint8_t						si = 0;
+
+			for (int8_t i = (this->size() - 1) * 8; i >= 0; i -= 8)
+				strUnicode._char[si++] = static_cast<uint8_t>((this->_value >> i) & 0xFF);
+			return strUnicode;
+		}
 	}
-}
-
-std::ostream							&operator<<(std::ostream &os,
-													Objects::Unicode::Char const &uc)
-{
-	char								strUnicode[5] = {0};
-	uint8_t								si = 0;
-
-	for (int8_t i = 24; i >= 0; i -= 8)
-	{
-		uint8_t					c = (uint8_t)((*uc >> i) & 0xFF);
-
-		if (c)
-			strUnicode[si++] = c;
-	}
-	if (si)
-		os << strUnicode;
-	return os;
 }

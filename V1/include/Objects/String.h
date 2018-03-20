@@ -57,8 +57,8 @@ extern "C" {
 	extern char					*String_rawData(_OBJECTS_STRING_ const *self);
 	extern char					String_at(_OBJECTS_STRING_ const *self,
 										  size_t const i);
-	extern UnicodeChar			String_unicodeAt(_OBJECTS_STRING_ const *self,
-												 size_t const i);
+	extern UnicodeChar	String_unicodeAt(_OBJECTS_STRING_ const *self,
+													 size_t const i);
 	extern bool					String_empty(_OBJECTS_STRING_ const *self);
 
 	/* Setters */
@@ -68,6 +68,7 @@ extern "C" {
 											  size_t const size);
 	extern _OBJECTS_STRING_		*String_assign(_OBJECTS_STRING_ *self,
 											   char const * const oth);
+	extern void					String_clear(_OBJECTS_STRING_ *self);
 
 	/* Methods */
 	extern _OBJECTS_STRING_		*String_concat(_OBJECTS_STRING_ *self,
@@ -92,12 +93,22 @@ extern "C" {
 												_OBJECTS_STRING_ const *str,
 												size_t const n,
 												size_t const begin);
+	extern void					String_shift(_OBJECTS_STRING_ *self,
+											  size_t const nbLeftBytes);
 	extern _OBJECTS_STRING_		String_uppercase(_OBJECTS_STRING_ const *self);
 	extern _OBJECTS_STRING_		String_lowercase(_OBJECTS_STRING_ const *self);
 	extern _OBJECTS_STRING_		String_reverse(_OBJECTS_STRING_ const *self);
 	extern _OBJECTS_STRING_		String_substr(_OBJECTS_STRING_ const *self,
-											  size_t const begin,
-											  size_t size);
+											  size_t const begin);
+	extern _OBJECTS_STRING_		String_nsubstr(_OBJECTS_STRING_ const *self,
+											   size_t const begin,
+											   size_t size);
+	extern _OBJECTS_STRING_		String_substrToUnicode(_OBJECTS_STRING_ const *self,
+													   size_t const begin,
+													   UnicodeChar const end);
+	extern _OBJECTS_STRING_		String_substrUnicode(_OBJECTS_STRING_ const *self,
+													 UnicodeChar const begin,
+													 UnicodeChar const end);
 	extern void					String_print(_OBJECTS_STRING_ const *self);
 
 	/* Iterator */

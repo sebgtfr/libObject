@@ -21,8 +21,8 @@ CXXFLAGS						+= -I./include
 
 ## SRCS C
 SRCS_C							= $(PATH_OBJECTS_C)Bool.c
-SRCS_C							+= $(PATH_OBJECTS_C)Char.c
 SRCS_C							+= $(PATH_OBJECTS_C)Buffer.c
+SRCS_C							+= $(PATH_OBJECTS_C)Char.c
 SRCS_C							+= $(PATH_OBJECTS_C)String.c
 
 ## SRCS CPP

@@ -17,9 +17,6 @@ typedef uint8_t					bool;
 #  define false					0
 #  define true					!false
 
-
-#  define CAST_BOOL(var)   		((bool)(!!(var)))
-
 # else
 
 extern "C" {
@@ -35,5 +32,6 @@ extern "C" {
 
 # define FALSE					g_false
 # define TRUE					g_true
+# define CAST_BOOL(var)   		((bool)(!!(var)))
 
 #endif /* !OBJECTS_BOOL_H_ */

@@ -21,21 +21,23 @@ CXX=1
 LANGUAGES=("c" "cpp")
 COMPILER=("gcc" "g++")
 
-OBJECTS=("Bool" "Char" "Buffer" "String")
+OBJECTS=("Bool" "Char" "Buffer" "String" "Vector")
 
 NB_OBJECTS=${#OBJECTS[@]}
 NB_LANGUAGES=${#LANGUAGES[@]}
 RELEASE="Release"
 
-
 make -C .. re && make -C .. clean
 
-echo -e "\n\033[01;33mBegining of compilations :\n"
-
-if [ ! -e $RELEASE ]
+if [ -e $RELEASE ]
 then
-	mkdir $RELEASE
+	rm -fr $RELEASE
+	echo -e "\n\033[01;33mDelete of last releases !"
 fi
+
+mkdir $RELEASE
+
+echo -e "\n\033[01;33mBegining of compilations :\n"
 
 for ((j=0; j < $NB_LANGUAGES; ++j))
 do

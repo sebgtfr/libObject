@@ -65,11 +65,11 @@ namespace						Objects
 				return *this;
 			}
 
-		inline bool			operator==(Objects::PrivateStringIterator const &it)
+		inline bool			operator==(Objects::PrivateStringIterator const &it) const
 			{
 				return (this->_current == it._current);
 			}
-		inline bool			operator!=(Objects::PrivateStringIterator const &it)
+		inline bool			operator!=(Objects::PrivateStringIterator const &it) const
 			{
 				return (this->_current != it._current);
 			}
@@ -95,6 +95,9 @@ namespace						Objects
 				Iterator(char const * const str)
 					: Objects::PrivateStringIterator(str) {};
 
+				Iterator(Objects::Unicode::String::Iterator const &copy)
+					: Objects::PrivateStringIterator(copy._current) {};
+
 				inline Objects::Unicode::String::Iterator	&operator++(void)
 					{
 						this->_current += Objects::Unicode::Char::size(*this->_current);
@@ -102,12 +105,8 @@ namespace						Objects
 					}
 				inline Objects::Unicode::String::Iterator	&operator--(void)
 					{
-						int8_t								i = -1;
-
-						while (this->_current[i] & 0x80 &&
-							   Objects::Unicode::Char::size(this->_current[i]) == 1)
-							--i;
-						this->_current += i;
+						while (*(--this->_current) & 0x80 &&
+							   Objects::Unicode::Char::size(*this->_current) == 1);
 						return *this;
 					}
 				Objects::Unicode::String::Iterator			operator++(int)
@@ -120,15 +119,12 @@ namespace						Objects
 				Objects::Unicode::String::Iterator	  		operator--(int)
 					{
 						Objects::Unicode::String::Iterator	it(this->_current);
-						int8_t								i = -1;
 
-						while (this->_current[i] & 0x80 &&
-							   Objects::Unicode::Char::size(this->_current[i]) == 1)
-							--i;
-						this->_current += i;
+						while (*(--this->_current) & 0x80 &&
+							   Objects::Unicode::Char::size(*this->_current) == 1);
 						return it;
 					}
-				inline Objects::Unicode::Char				operator*(void)
+				inline Objects::Unicode::Char				operator*(void) const
 					{
 						if (!this->_current)
 							throw Objects::Exception(Objects::Exception::READ_NULLPTR);
@@ -147,6 +143,9 @@ namespace						Objects
 		public:
 			Iterator(char const * const str)
 				: Objects::PrivateStringIterator(str) {};
+
+			Iterator(Objects::String::Iterator const &copy)
+				: Objects::PrivateStringIterator(copy._current) {};
 
 			inline Objects::String::Iterator	&operator++(void)
 				{
@@ -172,7 +171,7 @@ namespace						Objects
 					--this->_current;
 					return it;
 				}
-			inline char			&operator*(void)
+			inline char			&operator*(void) const
 				{
 					if (!this->_current)
 						throw Objects::Exception(Objects::Exception::READ_NULLPTR);
@@ -182,6 +181,7 @@ namespace						Objects
 
 
 		/* ctor & dtor on canonics form */
+		String(Objects::Unicode::Char const c);
 		String(char const * const str = nullptr);
 		String(Objects::String const &copy);
 		Objects::String			&operator=(Objects::String const &other);
@@ -200,7 +200,7 @@ namespace						Objects
 			{
 				return this->_unicodeSize;
 			}
-		inline char			*rawData(void) const
+		inline char				*rawData(void) const
 			{
 				return this->_data;
 			}
@@ -215,7 +215,7 @@ namespace						Objects
 											  ((i > this->_capacity) ?
 											  this->_capacity : i));
 			}
-		bool					empty(void) const
+		inline bool				empty(void) const
 			{
 				return !this->_size;
 			}
@@ -223,6 +223,7 @@ namespace						Objects
 		/* Setters */
 		void					capacity(size_t const capacity);
 		void					resize(size_t const size);
+		void					clear(void);
 
 		/* Operator */
 		inline char				*operator*(void) const
@@ -238,8 +239,17 @@ namespace						Objects
 				return this->at(i);
 			}
 		Objects::String			&operator=(char const * const str);
-		Objects::String			&operator+=(char const * const str);
-		Objects::String			&operator+=(Objects::String const &str);
+
+		inline Objects::String	&operator+=(char const * const str)
+			{
+				return this->append(str);
+			}
+
+		inline Objects::String	&operator+=(Objects::String const &str)
+			{
+				return this->append(str);
+			}
+
 		Objects::String			operator+(char const * const str);
 		Objects::String			operator+(Objects::String const &str);
 		inline bool				operator==(char const * const str) const
@@ -314,6 +324,12 @@ namespace						Objects
 														  nullptr);
 			}
 		size_t					find(Objects::Unicode::Char const c) const;
+		size_t					find(char const * const str) const;
+		inline size_t			find(Objects::String const &str) const
+			{
+				return this->find(str._data);
+			}
+
 		int						compare(char const * const str,
 										size_t const n = 0,
 										size_t const begin = 0) const;
@@ -323,11 +339,28 @@ namespace						Objects
 			{
 				return this->compare(str._data, n, begin);
 			}
+
+		Objects::String			&append(char const * const str);
+		Objects::String			&append(Objects::String const &str);
+
+		void					shift(size_t const nbLeftBytes);
 		Objects::String			uppercase(void) const;
 		Objects::String			lowercase(void) const;
 		Objects::String			reverse(void) const;
 		Objects::String			substr(size_t const begin,
 									   size_t size) const;
+		Objects::String			substr(size_t const begin,
+									   Objects::Unicode::Char const end) const;
+		inline Objects::String	substr(size_t const begin) const
+			{
+				return this->substr(begin, this->_size - begin);
+			}
+		inline Objects::String	substr(Objects::Unicode::Char const begin,
+									   Objects::Unicode::Char const end) const
+			{
+				return this->substr(static_cast<size_t>(this->find(begin)),
+									end);
+			}
 	};
 }
 
@@ -341,6 +374,5 @@ inline std::ostream				&operator<<(std::ostream &os,
 }
 
 # endif /* !CPLUSPLUS */
-
 
 #endif /* !OBJECTS_STRING_HPP_ */
