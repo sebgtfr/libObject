@@ -5,6 +5,7 @@
 #ifdef __cplusplus
 
 using namespace					Objects;
+using namespace					Objects::Unicode::String;
 
 #endif
 
@@ -79,12 +80,9 @@ int								main(void)
 
 	String_eq(&copy4Name, &rev);
 
-	String_dtor(&sub);
-	String_dtor(&rev);
-
 	(void)printf("reverse : %s\n", String_rawData(&copy4Name));
 
-	_OBJECTS_UNICODE_STRING_ITERATOR_ revIt = String_unicodeEnd(&copy4Name);
+	Iterator					revIt = String_unicodeEnd(&copy4Name);
 
 	while (!Unicode_String_Iterator_eq((revIt = Unicode_String_Iterator_prev(revIt)),
 									   String_unicodeBegin(&copy4Name)))
@@ -99,5 +97,7 @@ int								main(void)
 	String_dtor(&copy4Name);
 	String_dtor(&johnlc);
 	String_dtor(&johnuc);
+	String_dtor(&sub);
+	String_dtor(&rev);
 	return 0;
 }

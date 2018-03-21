@@ -89,14 +89,33 @@ namespace						Objects
 	{
 		namespace			String
 		{
-			class			Iterator : public Objects::PrivateStringIterator
+			class			Iterator
 			{
+			private:
+				char const	*_current;
+
 			public:
 				Iterator(char const * const str)
-					: Objects::PrivateStringIterator(str) {};
+					: _current(const_cast<char *>(str)) {};
 
 				Iterator(Objects::Unicode::String::Iterator const &copy)
-					: Objects::PrivateStringIterator(copy._current) {};
+					: _current(const_cast<char *>(copy._current)) {};
+
+				inline Objects::Unicode::String::Iterator	&operator=(Objects::Unicode::String::Iterator const &copy)
+					{
+						this->_current = copy._current;
+						return *this;
+					}
+
+				inline bool									operator==(Objects::Unicode::String::Iterator const &it) const
+					{
+						return (this->_current == it._current);
+					}
+
+				inline bool									operator!=(Objects::Unicode::String::Iterator const &it) const
+					{
+						return (this->_current != it._current);
+					}
 
 				inline Objects::Unicode::String::Iterator	&operator++(void)
 					{
@@ -138,14 +157,33 @@ namespace						Objects
 	{
 	public:
 		/* Iterator */
-		class					Iterator : public Objects::PrivateStringIterator
+		class					Iterator
 		{
+		private:
+			char				*_current;
+
 		public:
 			Iterator(char const * const str)
-				: Objects::PrivateStringIterator(str) {};
+				: _current(const_cast<char *>(str)) {};
 
 			Iterator(Objects::String::Iterator const &copy)
-				: Objects::PrivateStringIterator(copy._current) {};
+				: _current(const_cast<char *>(copy._current)) {};
+
+			inline Objects::String::Iterator	&operator=(Objects::String::Iterator const &copy)
+				{
+					this->_current = copy._current;
+					return *this;
+				}
+
+			inline bool							operator==(Objects::String::Iterator const &it) const
+				{
+					return (this->_current == it._current);
+				}
+
+			inline bool							operator!=(Objects::String::Iterator const &it) const
+				{
+					return (this->_current != it._current);
+				}
 
 			inline Objects::String::Iterator	&operator++(void)
 				{

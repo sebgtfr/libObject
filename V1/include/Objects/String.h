@@ -9,6 +9,7 @@
 # define OBJECTS_STRING_H_
 
 # include "Objects/String.hpp"
+# include "Objects/Iterator.h"
 
 # ifndef __cplusplus
 
@@ -17,16 +18,9 @@ typedef struct					String
 	uint8_t						__private[__SIZEOF_STRING__];
 }								String;
 
-typedef struct					StringIterator
-{
-	uint8_t						__private[__SIZEOF_STRING_ITERATOR__];
-}								StringIterator;
-
-typedef StringIterator			UnicodeStringIterator;
-
 # define _OBJECTS_STRING_					String
-# define _OBJECTS_STRING_ITERATOR_			StringIterator
-# define _OBJECTS_UNICODE_STRING_ITERATOR_	UnicodeStringIterator
+# define _OBJECTS_STRING_ITERATOR_			Iterator
+# define _OBJECTS_UNICODE_STRING_ITERATOR_	Iterator
 
 # else
 

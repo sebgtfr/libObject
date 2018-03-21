@@ -372,7 +372,7 @@ namespace						Objects
 			for (Objects::Unicode::String::Iterator it = this->_data + begin;
 				 it != this->unicodeEnd() && !(*it == end); ++it)
 				f += (*it).size();
-			return this->substr(begin, f + ((this->_data[f]) & 0x01));
+			return this->substr(begin, f + ((this->_data[f]) ? 1 : 0));
 		}
 		return Objects::String();
 	}

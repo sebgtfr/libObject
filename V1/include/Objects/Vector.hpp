@@ -255,7 +255,7 @@ namespace						Objects
 
 		void										shrink_to_fit(void)
 			{
-				if (this->_capacity != this->_size)
+				if (this->_capacity > this->_size)
 				{
 					this->_capacity = this->_size;
 					if (this->_capacity)
@@ -292,7 +292,7 @@ namespace						Objects
 					reinterpret_cast<_Type *>(this->_data)[this->_size--].~_Type();
 			}
 
-		inline void										insert(_Type const &value,
+		void											insert(_Type const &value,
 															   size_t const pos)
 			{
 				if (pos < this->_size)
@@ -322,6 +322,54 @@ namespace						Objects
 				}
 				else
 					this->push_back(value);
+			}
+
+		void											erase(size_t const begin,
+															  size_t const nb = 1)
+			{
+				if (begin < this->_size && nb > 0)
+				{
+					size_t								end = begin + ((nb + begin > this->_size) ? (this->_size - begin) : nb);
+					size_t								i = 0;
+					Objects::Vector<_Type>::Iterator	itEnd = this->end();
+
+					for (Objects::Vector<_Type>::Iterator it = this->begin(), rewrite = it;
+						 it != itEnd; ++it, ++i)
+					{
+						if (i >= begin && i < end)
+							it->~_Type();
+						else if (&(*rewrite++) != &(*it))
+							Objects::Memory::move(reinterpret_cast<void *>(&(*rewrite)),
+												  reinterpret_cast<void const *>(&(*it)),
+												  sizeof(_Type));
+					}
+					this->_size -= (end - begin);
+				}
+			}
+
+		void											erase(Objects::Vector<_Type>::Iterator const &pos)
+			{
+				void									*data = reinterpret_cast<void *>(&(*pos));
+
+				if (data >= this->_data && data < (this->_data + this->_size * sizeof(_Type)))
+					this->erase(static_cast<size_t>(data) - static_cast<size_t>(this->_data) / sizeof(_Type));
+			}
+
+		void											erase(Objects::Vector<_Type>::Iterator const &begin,
+															  Objects::Vector<_Type>::Iterator const &end)
+			{
+				void									*dataBegin = reinterpret_cast<void *>(&(*begin));
+				void									*dataEnd = reinterpret_cast<void *>(&(*end));
+				void									*endThis = this->_data + this->_size * sizeof(_Type);
+
+				if (dataBegin >= this->_data && dataBegin < endThis)
+				{
+					if (dataBegin == dataEnd)
+						this->erase(static_cast<size_t>(dataBegin) - static_cast<size_t>(this->_data) / sizeof(_Type));
+					else if (dataEnd > dataBegin && dataEnd <= endThis)
+						this->erase(static_cast<size_t>(dataBegin) - static_cast<size_t>(this->_data) / sizeof(_Type),
+									(static_cast<size_t>(dataEnd) - static_cast<size_t>(dataBegin)) / sizeof(_Type));
+				}
 			}
 	};
 }

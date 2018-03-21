@@ -28,5 +28,14 @@ int											main(void)
 
 	vnameCopy.insert('€', 1);
 	vnameCopyOP = vnameCopy;
+
+	vnameCopyOP.erase(2, 8);
+	vnameCopyOP.push_back('b');
+
+	for (Objects::Vector<Objects::Unicode::Char>::Iterator it = vnameCopyOP.begin();
+		 it != vnameCopyOP.end(); ++it)
+		std::cout << *it;
+	std::cout << std::endl;
+
 	return 0;
 }
