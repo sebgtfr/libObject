@@ -30,7 +30,12 @@ namespace						Objects
 
 # ifdef __cplusplus
 
-		PrivateString(char const * const str);
+		PrivateString(char const c);
+		PrivateString(char const * const str = nullptr);
+		PrivateString(ssize_t const nb);
+		PrivateString(size_t const nb);
+		PrivateString(float const nb);
+		PrivateString(double const nb);
 		PrivateString(Objects::PrivateString const &str);
 
 	protected:
@@ -40,6 +45,15 @@ namespace						Objects
 		void					copy(char const * const str,
 									 size_t const size,
 									 size_t const begin = 0);
+
+		static char				*copy(char *dst, size_t nb);
+		static char				*copy(char *dst, ssize_t nb);
+		static char				*copy(char *dst, float nb);
+		static char				*copy(char *dst, double nb);
+		static size_t			len(size_t nb);
+		static size_t			len(ssize_t nb);
+		static size_t			len(float nb);
+		static size_t			len(double nb);
 
 #  define __SIZEOF_STRING__		sizeof(Objects::PrivateString)
 
@@ -219,6 +233,15 @@ namespace						Objects
 
 
 		/* ctor & dtor on canonics form */
+		String(char const c);
+		String(short const nb);
+		String(int const nb);
+		String(ssize_t const nb);
+		String(unsigned short const nb);
+		String(unsigned int const nb);
+		String(size_t const nb);
+		String(float const nb);
+		String(double const nb);
 		String(Objects::Unicode::Char const c);
 		String(char const * const str = nullptr);
 		String(Objects::String const &copy);

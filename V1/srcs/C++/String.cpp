@@ -11,6 +11,59 @@
 namespace						Objects
 {
 	/* Private String */
+	PrivateString::PrivateString(char const c)
+		: _data(nullptr), _size(1), _unicodeSize(1), _capacity(1)
+	{
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * 2));
+		this->_data[0] = c;
+		this->_data[1] = '\0';
+	}
+
+	PrivateString::PrivateString(ssize_t const nb)
+		: _data(nullptr), _size(0), _unicodeSize(0),
+		  _capacity(Objects::PrivateString::len(nb))
+	{
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * (this->_capacity + 1)));
+		this->_size = this->_unicodeSize = this->_capacity;
+		Objects::PrivateString::copy(this->_data, nb);
+		this->_data[this->_size] = '\0';
+	}
+
+	PrivateString::PrivateString(size_t const nb)
+		: _data(nullptr), _size(0), _unicodeSize(0),
+		  _capacity(Objects::PrivateString::len(nb))
+	{
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * (this->_capacity + 1)));
+		this->_size = this->_unicodeSize = this->_capacity;
+		Objects::PrivateString::copy(this->_data, nb);
+		this->_data[this->_size] = '\0';
+	}
+
+	PrivateString::PrivateString(float const nb)
+		: _data(nullptr), _size(0), _unicodeSize(0),
+		  _capacity(Objects::PrivateString::len(nb))
+	{
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * (this->_capacity + 1)));
+		this->_size = this->_unicodeSize = this->_capacity;
+		Objects::PrivateString::copy(this->_data, nb);
+		this->_data[this->_size] = '\0';
+	}
+
+	PrivateString::PrivateString(double const nb)
+		: _data(nullptr), _size(0), _unicodeSize(0),
+		  _capacity(Objects::PrivateString::len(nb))
+	{
+		this->_data = static_cast<char *>(Objects::Memory::alloc(sizeof(char)
+																 * (this->_capacity + 1)));
+		this->_size = this->_unicodeSize = this->_capacity;
+		Objects::PrivateString::copy(this->_data, nb);
+		this->_data[this->_size] = '\0';
+	}
+
 	PrivateString::PrivateString(char const * const str)
 		: _data(nullptr), _size(0), _unicodeSize(0), _capacity(0)
 	{
@@ -62,7 +115,99 @@ namespace						Objects
 		this->_data[size + begin] = '\0';
 	}
 
+	char						*PrivateString::copy(char *dst,
+													size_t nb)
+	{
+		if (nb > 10)
+			dst = Objects::PrivateString::copy(dst, nb / 10);
+		*(dst++) = nb % 10 + '0';
+		return dst;
+	}
+
+	char						*PrivateString::copy(char *dst,
+													ssize_t nb)
+	{
+		if (nb < 0)
+		{
+			*dst = '-';
+			return Objects::PrivateString::copy(++dst, static_cast<size_t>(-nb));
+		}
+		return Objects::PrivateString::copy(dst, static_cast<size_t>(nb));
+	}
+
+	char						*PrivateString::copy(char *dst,
+													 float nb)
+	{
+		dst = Objects::PrivateString::copy(dst, static_cast<ssize_t>(nb));
+		if ((nb - static_cast<ssize_t>(nb)) != 0.0f)
+			*(dst++) = '.';
+		if (nb < 0)
+			nb = -nb;
+		while ((nb = (nb - static_cast<ssize_t>(nb)) * 10) != 0.0f)
+			*(dst++) = static_cast<ssize_t>(nb) + '0';
+		return (dst);
+	}
+
+	char						*PrivateString::copy(char *dst,
+													 double nb)
+	{
+		dst = Objects::PrivateString::copy(dst, static_cast<ssize_t>(nb));
+		if ((nb - static_cast<ssize_t>(nb)) != 0.0d)
+			*(dst++) = '.';
+		if (nb < 0)
+			nb = -nb;
+		while ((nb = (nb - static_cast<ssize_t>(nb)) * 10) != 0.0d)
+			*(dst++) = static_cast<ssize_t>(nb) + '0';
+		return (dst);
+	}
+
+	size_t						PrivateString::len(size_t nb)
+	{
+		size_t					len = 1;
+
+		while ((nb = nb / 10) > 0)
+			++len;
+		return len;
+	}
+
+	size_t						PrivateString::len(ssize_t nb)
+	{
+		if (nb < 0)
+			return (1 + Objects::PrivateString::len(static_cast<size_t>(-nb)));
+		return Objects::PrivateString::len(static_cast<size_t>(nb));
+	}
+
+	size_t						PrivateString::len(float nb)
+	{
+		size_t					len = Objects::PrivateString::len(static_cast<ssize_t>(nb));
+		size_t					declen = 0;
+
+		while ((nb = (nb - static_cast<ssize_t>(nb)) * 10) != 0.0d)
+			++declen;
+		if (declen)
+			++declen;
+		return len + declen;
+	}
+
+	size_t						PrivateString::len(double nb)
+	{
+		size_t					len = Objects::PrivateString::len(static_cast<ssize_t>(nb));
+		size_t					declen = 0;
+
+		while ((nb = (nb - static_cast<ssize_t>(nb)) * 10) != 0.0d)
+			++declen;
+		if (declen)
+			++declen;
+		return len + declen;
+	}
+
 	/* String */
+
+	String::String(char const c)
+		: PrivateString(c)
+	{
+	}
+
 	String::String(Objects::Unicode::Char const c)
 		: PrivateString(c.toString()._char)
 	{
@@ -70,6 +215,46 @@ namespace						Objects
 
 	String::String(char const * const str)
 		: PrivateString(str)
+	{
+	}
+
+	String::String(short const nb)
+		: PrivateString(static_cast<ssize_t const>(nb))
+	{
+	}
+
+	String::String(int const nb)
+		: PrivateString(static_cast<ssize_t const>(nb))
+	{
+	}
+
+	String::String(ssize_t const nb)
+		: PrivateString(nb)
+	{
+	}
+
+	String::String(unsigned short const nb)
+		: PrivateString(static_cast<size_t const>(nb))
+	{
+	}
+
+	String::String(unsigned int const nb)
+		: PrivateString(static_cast<size_t const>(nb))
+	{
+	}
+
+	String::String(size_t const nb)
+		: PrivateString(nb)
+	{
+	}
+
+	String::String(float const nb)
+		: PrivateString(nb)
+	{
+	}
+
+	String::String(double const nb)
+		: PrivateString(nb)
 	{
 	}
 
