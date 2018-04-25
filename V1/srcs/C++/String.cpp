@@ -10,6 +10,8 @@
 
 namespace						Objects
 {
+	size_t						Objects::PrivateString::_precision = 1000000;
+
 	/* Private String */
 	PrivateString::PrivateString(char const c)
 		: _data(nullptr), _size(1), _unicodeSize(1), _capacity(1)
@@ -199,6 +201,18 @@ namespace						Objects
 		if (declen)
 			++declen;
 		return len + declen;
+	}
+
+	void						PrivateString::setPrecision(uint8_t precision)
+	{
+		if (precision)
+		{
+			if (precision > 18)
+				precision = 18;
+			Objects::PrivateString::_precision = 1;
+			for (uint8_t i = 0; i < precision; ++i)
+				Objects::PrivateString::_precision *= 10;
+		}
 	}
 
 	/* String */

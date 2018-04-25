@@ -30,6 +30,8 @@ namespace						Objects
 
 # ifdef __cplusplus
 
+		static size_t			_precision;
+
 		PrivateString(char const c);
 		PrivateString(char const * const str = nullptr);
 		PrivateString(ssize_t const nb);
@@ -54,6 +56,7 @@ namespace						Objects
 		static size_t			len(ssize_t nb);
 		static size_t			len(float nb);
 		static size_t			len(double nb);
+		static void				setPrecision(uint8_t precision);
 
 #  define __SIZEOF_STRING__		sizeof(Objects::PrivateString)
 
@@ -421,6 +424,11 @@ namespace						Objects
 			{
 				return this->substr(static_cast<size_t>(this->find(begin)),
 									end);
+			}
+
+		static inline void		setPrecision(uint8_t const precision)
+			{
+				Objects::PrivateString::setPrecision(precision);
 			}
 	};
 }
