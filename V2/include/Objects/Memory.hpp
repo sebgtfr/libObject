@@ -9,6 +9,7 @@
 # define OBJECTS_MEMORY_HPP_
 
 # include <cstdlib>
+# include <cstdint>
 # include <cstring>
 
 namespace								Objects
@@ -30,6 +31,13 @@ namespace								Objects
 		{
 			static_cast<void>(::memmove(dst, src, size));
 		}
+
+        inline void                     fill(void *dst,
+                                             uint8_t const value,
+                                             size_t const size)
+        {
+            static_cast<void>(::memset(dst, value, size));
+        }
 
 		template<typename _Type>
 		inline _Type					*alloc(size_t const size)
@@ -66,6 +74,13 @@ namespace								Objects
 			Objects::Memory::move(reinterpret_cast<void *>(dst),
 								  reinterpret_cast<void const *>(src),
 								  size);
+		}
+
+        template<typename _Type1>
+		inline void						fill(_Type1 *dst, uint8_t const value,
+											 size_t const size)
+		{
+			Objects::Memory::fill(reinterpret_cast<void *>(dst), value, size);
 		}
 	}
 }

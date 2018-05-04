@@ -32,11 +32,17 @@ int								main(void)
 
 	Objects::String				str;
 
-	str = "Salut, je m'appelle " + name + " et j'ai " + 18 + " ans !";
-	std::cout << str << std::endl;
+	str = "Salut, je m'appelle " + name + " et j'ai " + 21 + " ans !";
+	if (str)
+		std::cout << str << std::endl;
 
-	str = Objects::String::format("Pi = %2.2f", vPi);
-	std::cout << str << std::endl;
+    Objects::String str2 = Objects::String::format("Salut, je m'appelle $[] et j'ai $[] ans !", name, 21);
+
+    if (str == str2)
+        std::cout << str2 << std::endl;
+
+/*	str = Objects::String::format("Pi = %2.2f", vPi);
+	std::cout << str << std::endl;*/
 
 	return 0;
 }

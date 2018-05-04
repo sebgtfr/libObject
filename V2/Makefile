@@ -23,6 +23,7 @@ SRCS							+= $(PATH_SRCS)Exception.cpp
 SRCS							+= $(PATH_SRCS)Buffer.cpp
 SRCS							+= $(PATH_SRCS)Char.cpp
 SRCS							+= $(PATH_SRCS)String.cpp
+SRCS							+= $(PATH_SRCS)Number.cpp
 
 OBJS							= $(SRCS:.cpp=.o)
 

@@ -10,7 +10,20 @@
 
 # include <cstdint>
 # include <cstdlib>
+# include <cstring>
 # include <cstdarg>
+# include <type_traits>
+# include <limits>
+
+/*
+
+TODO
+
+line 500
+
+- Replace C format to C++ format (using std::enable_if and variadic template)
+
+*/
 
 # include "Objects/Exception.hpp"
 # include "Objects/Char.hpp"
@@ -98,7 +111,7 @@ namespace						Objects
 		static uint64_t			_precision;
 
 		/* Private Methods */
-		void					len(char const * const str);
+		void					lenUnicode(char const * const str); // len + unicode Len
 		void					dup(char const * const str,
 									uint32_t const size);
 		void					copy(char const * const str,
@@ -114,10 +127,10 @@ namespace						Objects
 		static char				*fcopy(char *dst, double const nb,
 									   uint64_t const decPrecision,
 									   uint8_t const zero);
-		static uint32_t			lenFormat(char const *fmt, va_list *originalAp);
+		/*static uint32_t			lenFormat(char const *fmt, va_list *originalAp);
 		static void				format(char const *fmt,
 									   Objects::String &ret,
-									   va_list *ap);
+									   va_list *ap);*/
 
 	public:
 		/* Iterator */
@@ -407,6 +420,11 @@ namespace						Objects
 				return this->compare(str) <= 0;
 			}
 
+		inline operator bool(void) const
+			{
+				return !this->empty();
+			}
+
 		/* Methods */
 		inline Objects::String::Iterator	begin(void) const
 			{
@@ -491,17 +509,156 @@ namespace						Objects
 									end);
 			}
 
+
+        /**
+         * FORMAT METHODS
+         */
+
+        template<typename Param>
+        inline static uint32_t  lenFormat(typename std::enable_if<std::numeric_limits<Param>::is_integer, Param>::type const &param)
+            {
+                return Objects::String::len<Param>(param);
+            }
+
+        template<typename Param>
+        inline static uint32_t  lenFormat(typename std::enable_if<!std::numeric_limits<Param>::is_integer, Param>::type const &param)
+            {
+                return Objects::String::len(param);
+            }
+
+        inline static uint32_t  lenFormat(char const *fmt)
+            {
+                return Objects::String::len(fmt);
+            }
+
+        template<typename Param, typename... VarArgs>
+        static uint32_t         lenFormat(char const *fmt, Param const &param,
+                                          VarArgs const &... args)
+            {
+                uint32_t        len = 0;
+
+                while (*fmt)
+                {
+                    if (*fmt == '$' && *(fmt + 1) == '[')
+                    {
+                        char const *it = fmt + 2;
+
+                        while (*it && *it != ']')
+                            ++it;
+                        if (*it == ']')
+                            return len + Objects::String::lenFormat<Param>(param) + Objects::String::lenFormat(it + 1, args...);
+                    }
+                    ++fmt;
+                    ++len;
+                }
+                return len;
+            }
+
+        inline static void      generateStringFormat(Objects::String &str, char const *fmt)
+            {
+                str += fmt;
+            }
+
+        template<typename Param, typename... VarArgs>
+        static void             generateStringFormat(Objects::String &str, char const *fmt,
+                                                     Param const &param, VarArgs const &... args)
+            {
+                while (*fmt)
+                {
+                    if (*fmt == '$' && *(fmt + 1) == '[')
+                    {
+                        char const *it = fmt + 2;
+
+                        while (*it && *it != ']')
+                            ++it;
+                        if (*it == ']')
+                        {
+                            str += param;
+                            Objects::String::generateStringFormat(str, it + 1, args...);
+                            return ;
+                        }
+
+                    }
+                    str += *fmt++;
+                }
+            }
+
+        template<typename Param>
+        static Objects::String  format(char const * const fmt)
+            {
+                Objects::String ret;
+
+                ret.capacity(Objects::String::lenFormat(fmt));
+                Objects::String::generateStringFormat(ret, fmt);
+                return ret;
+            }
+
+        template<typename Param, typename... VarArgs>
+        static Objects::String  format(char const * const fmt, Param const &param,
+                                       VarArgs... args)
+            {
+                Objects::String ret;
+
+                ret.capacity(Objects::String::lenFormat(fmt, param, args...));
+                Objects::String::generateStringFormat(ret, fmt, param, args...);
+                return ret;
+            }
+
+
 		/* Static Methods */
-		static Objects::String	format(char const * const fmt, ...);
+/*		static Objects::String	format(char const * const fmt, ...);
 		static Objects::String	format(Objects::String const fmt, ...);
+		inline static Objects::String	format(char const * const fmt,
+											   va_list *ap)
+			{
+				Objects::String			ret;
+
+				Objects::String::format(fmt, ret, ap);
+				return ret;
+			}
+		inline static Objects::String	format(Objects::String const fmt,
+											   va_list *ap)
+			{
+				return Objects::String::format(*fmt, ap);
+                }*/
+
 		static void				setPrecision(uint8_t precision);
 
 		/* Tools Static Methods */
-		static uint32_t			len(size_t nb);
-		static uint32_t			len(ssize_t nb);
+        inline static uint32_t  len(char const * const str)
+            {
+                return ::strlen(str);
+            }
+        inline static uint32_t  len(Objects::String const &str)
+            {
+                return str.size();
+            }
+
+        template<typename _TypeUInt = size_t>
+        static uint32_t         len(typename std::enable_if<std::numeric_limits<_TypeUInt>::is_integer && std::is_unsigned<_TypeUInt>::value, _TypeUInt>::type nb)
+            {
+                uint32_t        len = 1;
+
+                while ((nb = nb / 10) > 0)
+                    ++len;
+                return len;
+            }
+
+        template<typename _TypeInt = ssize_t>
+        static uint32_t         len(typename std::enable_if<std::numeric_limits<_TypeInt>::is_integer && std::is_signed<_TypeInt>::value, _TypeInt>::type nb)
+            {
+                typedef typename std::make_unsigned<_TypeInt>::type _TypeUInt;
+
+                if (nb < 0)
+                    return (1 + Objects::String::len<_TypeUInt>(static_cast<_TypeUInt>(-nb)));
+                return Objects::String::len<_TypeUInt>(static_cast<_TypeUInt>(nb));
+            }
+
+        static uint32_t			len(float const nb);
 		static uint32_t			len(float const nb,
 									uint64_t &decPrecision,
 									uint8_t &zero);
+        static uint32_t			len(double const nb);
 		static uint32_t			len(double const nb,
 									uint64_t &decPrecision,
 									uint8_t &zero);

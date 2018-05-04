@@ -14,7 +14,7 @@ namespace						Objects
 
 	/* Private Methods */
 
-	void						String::len(char const * const str)
+	void						String::lenUnicode(char const * const str)
 	{
 		int8_t					unicodeSize = 0;
 
@@ -95,168 +95,165 @@ namespace						Objects
 	}
 
 	/* Format */
-	uint32_t					String::lenFormat(char const *fmt,
-												  va_list *originalAp)
+/*	uint32_t					String::lenFormat(char const *fmt,
+    va_list *originalAp)
 	{
-		uint32_t				len = 0;
-		va_list					ap;
+    uint32_t				len = 0;
+    va_list					ap;
 
-		va_copy(ap, *originalAp);
-		while (*fmt)
-		{
-			if (*fmt == '%')
-			{
-				char const		*it = fmt + 1;
-				unsigned char	intPrecision = 0;
-				unsigned char	decPrecision = 0;
+    va_copy(ap, *originalAp);
+    while (*fmt)
+    {
+    if (*fmt == '%')
+    {
+    char const		*it = fmt + 1;
+    unsigned char	intPrecision = 0;
+    unsigned char	decPrecision = 0;
 
-				while (*it >= '0' && *it <= '9')
-				{
-					intPrecision = intPrecision * 10 + (*it - '0');
-					++it;
-				}
-				if (*it == '.')
-					while (*(++it) >= '0' && *it <= '9')
-						decPrecision = decPrecision * 10 + (*it - '0');
-				switch (*it)
-				{
-				case 's':
-					if (!intPrecision && !decPrecision)
-					{
-						len += ::strlen(static_cast<char *>(va_arg(ap, char *)));
-						fmt = it;
-					}
-					break;
-				case 'd':
-					if (!decPrecision)
-					{
-						uint32_t	lenInt = Objects::String::len(static_cast<ssize_t>(va_arg(ap, int)));
+    while (*it >= '0' && *it <= '9')
+    {
+    intPrecision = intPrecision * 10 + (*it - '0');
+    ++it;
+    }
+    if (*it == '.')
+    while (*(++it) >= '0' && *it <= '9')
+    decPrecision = decPrecision * 10 + (*it - '0');
+    switch (*it)
+    {
+    case 's':
+    if (!intPrecision && !decPrecision)
+    {
+    len += ::strlen(static_cast<char *>(va_arg(ap, char *)));
+    fmt = it;
+    }
+    break;
+    case 'd':
+    if (!decPrecision)
+    {
+    uint32_t	lenInt = Objects::String::len(static_cast<ssize_t>(va_arg(ap, int)));
 
-						len += (lenInt < intPrecision) ? intPrecision : lenInt;
-						fmt = it;
-					}
-					break;
-				case 'u':
-					if (!decPrecision)
-					{
-						uint32_t	lenInt = Objects::String::len(static_cast<size_t>(va_arg(ap, unsigned int)));
+    len += (lenInt < intPrecision) ? intPrecision : lenInt;
+    fmt = it;
+    }
+    break;
+    case 'u':
+    if (!decPrecision)
+    {
+    uint32_t	lenInt = Objects::String::len(static_cast<size_t>(va_arg(ap, unsigned int)));
 
-						len += (lenInt < intPrecision) ? intPrecision : lenInt;
-						fmt = it;
-					}
-					break;
-				case 'f':
-					Objects::String::setPrecision(decPrecision);
+    len += (lenInt < intPrecision) ? intPrecision : lenInt;
+    fmt = it;
+    }
+    break;
+    case 'f':
+    Objects::String::setPrecision(decPrecision);
 
-					double		val = static_cast<double>(va_arg(ap, double));
-					uint64_t	valDecPrecision;
-					uint8_t		zero;
-					uint32_t	lenVal = Objects::String::len(val, valDecPrecision, zero);
-					uint32_t	lenValCast = Objects::String::len(static_cast<ssize_t>(lenVal));
+    double		val = static_cast<double>(va_arg(ap, double));
+    uint32_t	lenVal = Objects::String::len(val);
+    uint32_t	lenValCast = Objects::String::len(static_cast<ssize_t>(lenVal));
 
-					(void)zero;
-					if (lenValCast < intPrecision)
-						lenVal += (intPrecision - lenValCast);
-					len = lenVal;
-					fmt = it;
-					break;
-				}
-				if (*fmt == '%')
-					++len;
-			}
-			else
-				++len;
-			++fmt;
-		}
-		return len;
+    if (lenValCast < intPrecision)
+    lenVal += (intPrecision - lenValCast);
+    len = lenVal;
+    fmt = it;
+    break;
+    }
+    if (*fmt == '%')
+    ++len;
+    }
+    else
+    ++len;
+    ++fmt;
+    }
+    return len;
 	}
 
 	void						String::format(char const *fmt,
-											   Objects::String &ret,
-											   va_list *ap)
+    Objects::String &ret,
+    va_list *ap)
 	{
-		ret.capacity(Objects::String::lenFormat(fmt, ap));
-		while (*fmt)
-		{
-			if (*fmt == '%')
-			{
-				char const		*it = fmt + 1;
-				unsigned char	intPrecision = 0;
-				unsigned char	decPrecision = 0;
+    ret.capacity(Objects::String::lenFormat(fmt, ap));
+    while (*fmt)
+    {
+    if (*fmt == '%')
+    {
+    char const		*it = fmt + 1;
+    unsigned char	intPrecision = 0;
+    unsigned char	decPrecision = 0;
 
-				while (*it >= '0' && *it <= '9')
-				{
-					intPrecision = intPrecision * 10 + (*it - '0');
-					++it;
-				}
-				if (*it == '.')
-					while (*(++it) >= '0' && *it <= '9')
-						decPrecision = decPrecision * 10 + (*it - '0');
-				switch (*it)
-				{
-				case 's':
-					if (!intPrecision && !decPrecision)
-					{
-						ret += static_cast<char *>(va_arg(*ap, char *));
-						fmt = it;
-					}
-					break;
-				case 'd':
-					if (!decPrecision)
-					{
-						ssize_t const	tmp = static_cast<ssize_t>(va_arg(*ap, int));
-						uint32_t	lenInt = Objects::String::len(tmp);
+    while (*it >= '0' && *it <= '9')
+    {
+    intPrecision = intPrecision * 10 + (*it - '0');
+    ++it;
+    }
+    if (*it == '.')
+    while (*(++it) >= '0' && *it <= '9')
+    decPrecision = decPrecision * 10 + (*it - '0');
+    switch (*it)
+    {
+    case 's':
+    if (!intPrecision && !decPrecision)
+    {
+    ret += static_cast<char *>(va_arg(*ap, char *));
+    fmt = it;
+    }
+    break;
+    case 'd':
+    if (!decPrecision)
+    {
+    ssize_t const	tmp = static_cast<ssize_t>(va_arg(*ap, int));
+    uint32_t	lenInt = Objects::String::len(tmp);
 
-						while (lenInt < intPrecision)
-						{
-							ret += '0';
-							++lenInt;
-						}
-						ret += tmp;
-						fmt = it;
-					}
-					break;
-				case 'u':
-					if (!decPrecision)
-					{
-						size_t const	tmp = static_cast<size_t>(va_arg(*ap, unsigned int));
-						uint32_t		lenInt = Objects::String::len(tmp);
+    while (lenInt < intPrecision)
+    {
+    ret += '0';
+    ++lenInt;
+    }
+    ret += tmp;
+    fmt = it;
+    }
+    break;
+    case 'u':
+    if (!decPrecision)
+    {
+    size_t const	tmp = static_cast<size_t>(va_arg(*ap, unsigned int));
+    uint32_t		lenInt = Objects::String::len(tmp);
 
-						while (lenInt < intPrecision)
-						{
-							ret += '0';
-							++lenInt;
-						}
-						ret += tmp;
-						fmt = it;
-					}
-					break;
-				case 'f':
-					Objects::String::setPrecision(decPrecision);
+    while (lenInt < intPrecision)
+    {
+    ret += '0';
+    ++lenInt;
+    }
+    ret += tmp;
+    fmt = it;
+    }
+    break;
+    case 'f':
+    Objects::String::setPrecision(decPrecision);
 
-					double		val = static_cast<double>(va_arg(*ap, double));
-					uint64_t	valDecPrecision;
-					uint8_t		zero;
-					uint32_t	lenVal = Objects::String::len(val, valDecPrecision, zero);
-					uint32_t	lenValCast = Objects::String::len(static_cast<ssize_t>(lenVal));
+    double		val = static_cast<double>(va_arg(*ap, double));
+    uint64_t	valDecPrecision;
+    uint8_t		zero;
+    uint32_t	lenVal = Objects::String::len(val, valDecPrecision, zero);
+    uint32_t	lenValCast = Objects::String::len(static_cast<ssize_t>(lenVal));
 
-					if (lenValCast < intPrecision)
-					{
-						ret += '0';
-						++lenValCast;
-					}
-					ret += val;
-					fmt = it;
-					break;
-				}
-				if (*fmt == '%')
-					ret += '%';
-			}
-			else
-				ret += *fmt;
-			++fmt;
-		}
-	}
+    if (lenValCast < intPrecision)
+    {
+    ret += '0';
+    ++lenValCast;
+    }
+    ret += val;
+    fmt = it;
+    break;
+    }
+    if (*fmt == '%')
+    ret += '%';
+    }
+    else
+    ret += *fmt;
+    ++fmt;
+    }
+    }*/
 
 	/* Public */
 
@@ -279,7 +276,7 @@ namespace						Objects
 	{
 		if (str)
 		{
-			this->len(str);
+			this->lenUnicode(str);
 			this->dup(str, this->_capacity);
 		}
 	}
@@ -383,7 +380,7 @@ namespace						Objects
 			if (this->_capacity < this->_size)
 			{
 				this->_size = this->_unicodeSize = 0;
-				this->len(reinterpret_cast<char const * const>(this->_data));
+				this->lenUnicode(reinterpret_cast<char const * const>(this->_data));
 			}
 		}
 	}
@@ -446,7 +443,7 @@ namespace						Objects
 			{
 				Objects::String	tmp;
 
-				tmp.len(str);
+				tmp.lenUnicode(str);
 				if (tmp._capacity != this->_capacity)
 				{
 					Objects::Memory::free<char>(this->_data);
@@ -560,7 +557,7 @@ namespace						Objects
 		Objects::String			ret;
 		Objects::String			tmp;
 
-		tmp.len(str);
+		tmp.lenUnicode(str);
 		ret.capacity(this->_size + tmp._size);
 		ret.copy(reinterpret_cast<char const * const>(this->_data), this->_size);
 		ret.copy(str, tmp._size, this->_size);
@@ -669,8 +666,8 @@ namespace						Objects
 		int						ret = (str) ? -1 : 1;
 
 		if (str && this->_data && begin < this->_capacity)
-			ret = (!n) ? strcmp(this->_data + begin, str) :
-				strncmp(this->_data + begin, str, n);
+			ret = (!n) ? ::strcmp(this->_data + begin, str) :
+				::strncmp(this->_data + begin, str, n);
 		return (this->_data == str) ? 0 : ret;
 	}
 
@@ -703,7 +700,7 @@ namespace						Objects
 		Objects::String			tmp;
 		uint32_t				freeSpace = this->_capacity - this->_size;
 
-		tmp.len(str);
+		tmp.lenUnicode(str);
 		if (tmp._size > freeSpace)
 			this->capacity(this->_capacity + (tmp._size - freeSpace));
 		this->copy(str, tmp._size, this->_size);
@@ -877,7 +874,7 @@ namespace						Objects
 				size = this->_size - begin;
 			ret.dup(reinterpret_cast<char const *>(this->_data + begin), size);
 			ret._capacity = size;
-			ret.len(ret._data);
+			ret.lenUnicode(ret._data);
 		}
 		return ret;
 	}
@@ -898,27 +895,27 @@ namespace						Objects
 	}
 
 	/* Static Methods */
-	Objects::String				String::format(char const * const fmt, ...)
+/*	Objects::String				String::format(char const * const fmt, ...)
 	{
-		va_list					ap;
-		Objects::String			ret;
+    va_list					ap;
+    Objects::String			ret;
 
-		va_start(ap, fmt);
-		Objects::String::format(fmt, ret, &ap);
-		va_end(ap);
-		return ret;
+    va_start(ap, fmt);
+    Objects::String::format(fmt, ret, &ap);
+    va_end(ap);
+    return ret;
 	}
 
 	Objects::String				String::format(Objects::String const fmt, ...)
 	{
-		va_list					ap;
-		Objects::String			ret;
+    va_list					ap;
+    Objects::String			ret;
 
-		va_start(ap, fmt);
-		Objects::String::format(*fmt, ret, &ap);
-		va_end(ap);
-		return ret;
-	}
+    va_start(ap, fmt);
+    Objects::String::format(*fmt, ret, &ap);
+    va_end(ap);
+    return ret;
+    }*/
 
 	void						String::setPrecision(uint8_t precision)
 	{
@@ -933,20 +930,24 @@ namespace						Objects
 	}
 
 	/* Tools Static Methods */
-	uint32_t					String::len(size_t nb)
-	{
-		uint32_t				len = 1;
 
-		while ((nb = nb / 10) > 0)
-			++len;
-		return len;
-	}
-
-	uint32_t					String::len(ssize_t nb)
+    uint32_t					String::len(float const nb)
 	{
-		if (nb < 0)
-			return (1 + Objects::String::len(static_cast<size_t>(-nb)));
-		return Objects::String::len(static_cast<size_t>(nb));
+		ssize_t const			castNb = static_cast<ssize_t>(nb);
+		uint8_t const			ret = (castNb) ? 1 : 0;
+		uint64_t				decNb = ((nb + ((ret) ? 0 : 1)) * Objects::String::_precision -
+										 (castNb - ret) *
+										 Objects::String::_precision);
+		uint32_t				lenDec;
+        uint64_t                decPrecision = Objects::String::_precision;
+
+		while (decNb && (!(decNb % 10)))
+		{
+			decNb /= 10;
+			decPrecision /= 10;
+		}
+		lenDec = Objects::String::len(decNb) - 1;
+		return Objects::String::len(castNb) + lenDec;
 	}
 
 	uint32_t					String::len(float const nb,
@@ -968,6 +969,25 @@ namespace						Objects
 		}
 		lenDec = Objects::String::len(decNb) - 1;
 		zero = lenDec - Objects::String::len(decNb - 1 * decPrecision);
+		return Objects::String::len(castNb) + lenDec;
+	}
+
+    uint32_t					String::len(double const nb)
+	{
+		ssize_t const			castNb = static_cast<ssize_t>(nb);
+		uint8_t const			ret = (castNb) ? 1 : 0;
+		uint64_t				decNb = ((nb + ((ret) ? 0 : 1)) * Objects::String::_precision -
+										 (castNb - ret) *
+										 Objects::String::_precision);
+		uint32_t				lenDec;
+        uint64_t                decPrecision = Objects::String::_precision;
+
+		while (decNb && (!(decNb % 10)))
+		{
+			decNb /= 10;
+			decPrecision /= 10;
+		}
+		lenDec = Objects::String::len(decNb) - 1;
 		return Objects::String::len(castNb) + lenDec;
 	}
 
@@ -1055,11 +1075,8 @@ Objects::String					operator+(float const nb,
 										  Objects::String const &str)
 {
 	Objects::String				ret;
-	uint64_t					decPrecision;
-	uint8_t						zero;
 
-	(void)decPrecision;(void)zero;
-	ret.capacity(str.size() + Objects::String::len(nb, decPrecision, zero));
+	ret.capacity(str.size() + Objects::String::len(nb));
 	ret += nb;
 	ret += str;
 	return ret;
@@ -1069,11 +1086,8 @@ Objects::String					operator+(double const nb,
 										  Objects::String const &str)
 {
 	Objects::String				ret;
-	uint64_t					decPrecision;
-	uint8_t						zero;
 
-	(void)decPrecision;(void)zero;
-	ret.capacity(str.size() + Objects::String::len(nb, decPrecision, zero));
+	ret.capacity(str.size() + Objects::String::len(nb));
 	ret += nb;
 	ret += str;
 	return ret;
